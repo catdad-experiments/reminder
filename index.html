@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Share Edit</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#591265">
+</head>
+<body>
+  <p id="shareNotSupported" class="hidden">
+    <code>navigator.share</code> is not supported in this
+    browser, try sharing from another app instead.
+  </p>
+
+  <!-- Install/Share buttons, disabled by default -->
+  <div id="installContainer">
+    <button id="butShare" type="button" disabled>Share</button>
+    <button id="butInstall" type="button" disabled>Install</button>
+  </div>
+
+  <!-- import the webpage's javascript file -->
+  <script src="https://cdn.jsdelivr.net/npm/onscreen-console@1.1.1/dist/min/onscreen-console.min.js"></script>
+  <script>
+    oConsole.enable();
+    // show the onscreen-console panel
+    oConsole.show();
+  </script>
+  <script src="/script.js"></script>
+</body>
+</html>
