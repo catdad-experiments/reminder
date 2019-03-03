@@ -1,0 +1,26 @@
+{
+  "name": "reminder",
+  "version": "1.0.0",
+  "description": "pwa experiment for setting reminders",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx multispawn npx http-server -p 8000 -c-1 ! npx localtunnel --port 8000"
+  },
+  "author": "Kiril Vatev <vatev.1@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "http-server": "^0.11.1",
+    "localtunnel": "^1.9.1",
+    "multispawn": "^1.0.0"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/catdad-experiments/reminder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/catdad-experiments/reminder/issues"
+  },
+  "homepage": "https://github.com/catdad-experiments/reminder#readme"
+}
