@@ -77,8 +77,15 @@ if ('share' in navigator) {
 if ('serviceWorker' in navigator) {
   console.log('👍', 'navigator.serviceWorker is supported');
 
-  navigator.serviceWorker.register('/service-worker.js').then(() => {
+  navigator.serviceWorker.register('/service-worker.js').then((registration) => {
     console.log('👍', 'worker registered');
+
+    registration.sync.register('reminder').then(() => {
+      console.log('👍', 'sync registration succeeded');
+    }).catch(err => {
+      console.warn('👎', 'sync registration errored', err);
+    });
+
   }).catch(err => {
     console.warn('👎', 'worker errored', err);
   });
