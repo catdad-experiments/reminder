@@ -5,14 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx multispawn npx http-server -p 8000 -c-1 ! npx localtunnel --port 8000"
+    "start": "npx multispawn npx serve -l 8002 ! ssh -R 80:localhost:8002 ssh.localhost.run"
   },
   "author": "Kiril Vatev <vatev.1@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "http-server": "^0.11.1",
-    "localtunnel": "^1.9.1",
-    "multispawn": "^1.0.0"
+    "multispawn": "^1.0.0",
+    "serve": "^11.3.0"
   },
   "dependencies": {},
   "repository": {
