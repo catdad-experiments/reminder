@@ -157,3 +157,20 @@ html, body {
   max-width: var(--limit);
   text-align: center;
 }
+
+/* CARD */
+
+.card {
+  width: calc(100% - 40px);
+  border: 1px solid white;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.card div {
+  padding: 4px;
+}
+
+.card img {
+  max-width: 100%;
+}
