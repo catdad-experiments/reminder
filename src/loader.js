@@ -43,9 +43,8 @@ if ('serviceWorker' in navigator) {
     }
 
     if (data.action === 'receive-share') {
-      const { text, url, file } = data;
-
-      console.log(text, url, file);
+      const { title, text, url, file } = data;
+      events.emit('receive-share', { title, text, url, file });
     }
 
     console.log('worker message', ev.data);
@@ -132,15 +131,13 @@ export default () => {
   // load all the modules from the server directly
   Promise.all([
     load('./event-emitter.js'),
+    load('./receiver.js'),
   ]).then(async ([
     eventEmitter,
-    storage,
-    menu,
-    mover,
     ...modules
   ]) => {
     // set up a global event emitter
-    const context = { events: eventEmitter(), menu, mover, storage, load };
+    const context = { events: eventEmitter(), load };
     const destroys = await map(modules, mod => mod(context));
 
     context.events.on('error', function (err) {
