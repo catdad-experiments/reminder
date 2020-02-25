@@ -1,28 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <title>Share Edit</title>
+  <title>Reminder</title>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="keywords" content="reminder,remind,share,sharesheet,notification,javascript,catdad">
 
   <!-- Manifest -->
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#591265">
-</head>
-<body>
-  <p id="shareNotSupported" class="hidden">
-    <code>navigator.share</code> is not supported in this
-    browser, try sharing from another app instead.
-  </p>
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#202124">
+  <link rel="icon" type="image/png" href="assets/icon-512.png" />
 
-  <!-- Install/Share buttons, disabled by default -->
-  <div id="installContainer">
-    <button id="butShare" type="button" disabled>Share</button>
-    <button id="butInstall" type="button" disabled>Install</button>
+  <link rel="stylesheet" type="text/css" href="src/style.css">
+</head>
+
+<body>
+  <div id="unsupported" class="unsupported limit">
+    <p>This browser is not supported.</p>
+    <p>See the <a href="https://github.com/catdad-experiments/reminder">GitHub page</a> for more info.</p>
   </div>
 
-  <!-- import the webpage's javascript file -->
+  <div id="main" class="main limit hide">
+  </div>
+
+  <script type="module">
+    document.querySelector('#unsupported').remove();
+    document.querySelector('#main').classList.remove('hide');
+  </script>
   <script type="module">
     import loader from './src/loader.js';
 
@@ -30,5 +36,6 @@
       loader();
     });
   </script>
+  <script src="/analytics.js" async></script>
 </body>
 </html>

@@ -1,0 +1,159 @@
+:root {
+  --controls-height: 3em;
+  --full: calc(var(--vh, 1vh) * 100);
+  --limit: 600px;
+
+  --darkest: #202124;
+  --dark: #27292b;
+  --middle: #777777;
+  --light: #e5e5e5;
+  --lightest: #f0f0f0;
+
+  --DARK-lvl2: var(--dark);
+  --DARK-background: var(--darkest);
+  --DARK-foreground: var(--light);
+
+  --LIGHT-lvl2: var(--lightest);
+  --LIGHT-foreground: var(--darkest);
+  --LIGHT-background: var(--light);
+}
+
+body {
+  --lvl2: var(--DARK-lvl2);
+  --background: var(--DARK-background);
+  --foreground: var(--DARK-foreground);
+}
+
+@media (prefers-color-scheme: light) {
+  body.themed:not(.dark) {
+    --lvl2: var(--LIGHT-lvl2);
+    --foreground: var(--LIGHT-foreground);
+    --background: var(--LIGHT-background);
+  }
+}
+
+body.themed.light {
+  --lvl2: var(--LIGHT-lvl2);
+  --foreground: var(--LIGHT-foreground);
+  --background: var(--LIGHT-background);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--background);
+
+  font-family: sans-serif;
+  color: var(--foreground);
+  line-height: 1.2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.unsupported {
+  text-align: center;
+}
+.unsupported a {
+  color: white;
+  font-weight: bold;
+}
+
+.header-container.error {
+  font-weight: bold;
+  background: #d64c4f;
+}
+
+.container {
+  position: relative;
+  height: var(--full);
+
+  display: flex;
+  flex-direction: column;
+}
+
+.contents {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.limit {
+  width: 100%;
+  max-width: var(--limit);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hide {
+  display: none !important;
+}
+
+.invisible {
+  opacity: 0;
+}
+
+/** STUFF ABOVE IS STANDARD FRAMEWORK **/
+
+.main {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: var(--controls-height)
+}
+
+/* MENU */
+
+.menu {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.5);
+  user-select: none;
+  z-index: 10;
+}
+
+.menu > ul {
+  position: absolute;
+  bottom: 0;
+  background: var(--background);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  border-radius: 5px 5px 0 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+}
+
+.menu > ul > li {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+}
+
+.menu > ul > li > i {
+  padding-right: 0.5em;
+}
+
+.menu > ul > li.meta {
+  opacity: 0.75;
+  font-weight: bold;
+  justify-content: center;
+}
+
+/* TOAST STYLE */
+
+.toastify.toastify.toastify {
+  width: calc(100% - 20px);
+  max-width: var(--limit);
+  text-align: center;
+}
