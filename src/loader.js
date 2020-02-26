@@ -169,6 +169,8 @@ export default () => {
 
     events.flush(context.events);
     events = context.events;
+
+    events.emit('render');
   }).catch(function catchErr(err) {
     events.emit('error', err);
     onError(err);
