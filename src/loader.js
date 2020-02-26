@@ -132,6 +132,7 @@ export default () => {
   Promise.all([
     load('./event-emitter.js'),
     load('./receiver.js'),
+    load('./sample.js'),
   ]).then(async ([
     eventEmitter,
     ...modules
