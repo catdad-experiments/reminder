@@ -25,6 +25,14 @@ const createImg = ({ file }) => {
   return img;
 };
 
+const createLink = (url, text) => {
+  const a = document.createElement('a');
+  a.href = url;
+  a.appendChild(createText(text || url));
+
+  return a;
+};
+
 const createText = text => document.createTextNode(text);
 
 export default ({ events }) => {
@@ -56,13 +64,22 @@ export default ({ events }) => {
     const card = createElem({ classname: 'card' });
 
     card.appendChild(createElem({
-      children: [ createText(`title: ${title}`) ]
+      children: [
+        createText('title: '),
+        isUrl(title) ? createLink(title) : createText(`${title}`)
+      ]
     }));
     card.appendChild(createElem({
-      children: [ createText(`text: ${text}`) ]
+      children: [
+        createText('text: '),
+        isUrl(text) ? createLink(text) : createText(`${text}`)
+      ]
     }));
     card.appendChild(createElem({
-      children: [ createText(`url: ${url}`) ]
+      children: [
+        createText('url: '),
+        isUrl(url) ? createLink(url) : createText(`${url}`)
+      ]
     }));
 
     elem.appendChild(card);
