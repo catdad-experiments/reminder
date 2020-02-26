@@ -38,9 +38,7 @@ const createLink = (url, text) => {
 export default ({ events, db }) => {
   const elem = document.querySelector('#main');
 
-  const renderFile = ({ id, file }) => {
-    const card = createElem({ classname: 'card' });
-
+  const renderFile = (card, { file }) => {
     card.appendChild(createElem({
       children: [ createText(`file name: ${file.name}`) ]
     }));
@@ -52,16 +50,12 @@ export default ({ events, db }) => {
     }));
 
     card.appendChild(createImg({ file }));
-
-    elem.appendChild(card);
   };
 
-  const renderPlain = ({ id, title, text, url }) => {
-    const card = createElem({ classname: 'card' });
-
+  const renderPlain = (card, { id, title, text, url }) => {
     card.appendChild(createElem({
       children: [
-        createText('title: '),
+        createText(`${id} title: `),
         isUrl(title) ? createLink(title) : createText(`${title}`)
       ]
     }));
@@ -77,16 +71,39 @@ export default ({ events, db }) => {
         isUrl(url) ? createLink(url) : createText(`${url}`)
       ]
     }));
-
-    elem.appendChild(card);
   };
 
   const onRender = async () => {
+    const cards = [].slice.call(document.querySelectorAll('.card'))
+      .map(card => {
+        return {
+          card, id: Number(card.getAttribute('data-id'))
+        };
+      });
+
+    let currentCard;
+
     await db.each(null, record => {
+      const card = createElem({ classname: 'card' });
+      card.setAttribute('data-id', record.id);
+
+      const idx = cards.findIndex(c => c.id === record.id);
+
+      if (idx !== -1) {
+        currentCard = cards[idx];
+        return;
+      }
+
       if (record.file) {
-        renderFile(record);
+        renderFile(card, record);
       } else {
-        renderPlain(record);
+        renderPlain(card, record);
+      }
+
+      if (currentCard) {
+        elem.insertBefore(card, currentCard.card);
+      } else {
+        elem.insertBefore(card, elem.firstChild);
       }
     });
   };
