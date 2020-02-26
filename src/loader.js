@@ -90,6 +90,14 @@ export default () => {
       } catch (err) {
         return false;
       }
+    }],
+    ['IndexedDB', () => {
+      return !!(
+        window.indexedDB ||
+        window.mozIndexedDB ||
+        window.webkitIndexedDB ||
+        window.msIndexedDB
+      );
     }]
   ].filter(function (name) {
     if (Array.isArray(name)) {
@@ -131,14 +139,17 @@ export default () => {
   // load all the modules from the server directly
   Promise.all([
     load('./event-emitter.js'),
+    load('./db.js'),
     load('./receiver.js'),
     load('./sample.js'),
   ]).then(async ([
     eventEmitter,
+    DB,
     ...modules
   ]) => {
     // set up a global event emitter
-    const context = { events: eventEmitter(), load };
+    const db = await DB();
+    const context = { events: eventEmitter(), load, db };
     const destroys = await map(modules, mod => mod(context));
 
     context.events.on('error', function (err) {
