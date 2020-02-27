@@ -1,76 +1,34 @@
 const isUrl = text => /^https?:\/\/.+/.test(text);
 
-const createElem = ({ tag = 'div', children = [], classname }) => {
-  const el = document.createElement(tag);
-
-  if (classname) {
-    el.className = classname;
-  }
-
-  children.forEach(c => el.appendChild(c));
-
-  return el;
-};
-
-const createImg = ({ file }) => {
-  const url = URL.createObjectURL(file);
-  const img = document.createElement('img');
-
-  img.onload = () => {
-    URL.revokeObjectURL(url);
-  };
-
-  img.src = url;
-
-  return img;
-};
-
-const createText = text => document.createTextNode(text);
-
-const createLink = (url, text) => {
-  const a = document.createElement('a');
-  a.href = url;
-  a.appendChild(createText(text || url));
-
-  return a;
-};
-
-export default ({ events, db }) => {
+export default ({ events, db, dom }) => {
   const elem = document.querySelector('#main');
 
   const renderFile = (card, { file }) => {
-    card.appendChild(createElem({
-      children: [ createText(`file name: ${file.name}`) ]
-    }));
-    card.appendChild(createElem({
-      children: [ createText(`file size: ${file.size}`) ]
-    }));
-    card.appendChild(createElem({
-      children: [ createText(`file type: ${file.type}`) ]
-    }));
-
-    card.appendChild(createImg({ file }));
+    dom.children(
+      card,
+      dom.children(dom.div(), dom.text(`file name: ${file.name}`)),
+      dom.children(dom.div(), dom.text(`file size: ${file.size}`)),
+      dom.children(dom.div(), dom.text(`file type: ${file.type}`)),
+      dom.img(file)
+    );
   };
 
   const renderPlain = (card, { id, title, text, url }) => {
-    card.appendChild(createElem({
-      children: [
-        createText(`${id} title: `),
-        isUrl(title) ? createLink(title) : createText(`${title}`)
-      ]
-    }));
-    card.appendChild(createElem({
-      children: [
-        createText('text: '),
-        isUrl(text) ? createLink(text) : createText(`${text}`)
-      ]
-    }));
-    card.appendChild(createElem({
-      children: [
-        createText('url: '),
-        isUrl(url) ? createLink(url) : createText(`${url}`)
-      ]
-    }));
+    dom.children(
+      card,
+      dom.children(
+        dom.div(),
+        isUrl(title) ? dom.link(title, title) : dom.text(`${id} title: ${title}`)
+      ),
+      dom.children(
+        dom.div(),
+        isUrl(text) ? dom.link(text, text) : dom.text(`text: ${text}`)
+      ),
+      dom.children(
+        dom.div(),
+        isUrl(url) ? dom.link(url, url) : dom.text(`text: ${url}`)
+      )
+    );
   };
 
   const onRender = async () => {
@@ -84,8 +42,9 @@ export default ({ events, db }) => {
     let currentCard;
 
     await db.each(null, record => {
-      const card = createElem({ classname: 'card' });
-      card.setAttribute('data-id', record.id);
+      const card = dom.props(dom.div('card'), {
+        'data-id': record.id
+      });
 
       const idx = cards.findIndex(c => c.id === record.id);
 
