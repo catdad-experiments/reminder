@@ -12,25 +12,45 @@ export default ({ events, db, dom }) => {
 
   };
 
-  const splash = ({ title, text, url, file }) => {
+  const fileSplash = ({ file }) => {
+    const IMG = dom.img(file);
+    const serializer = () => file;
+
+    return [serializer, IMG];
+  };
+
+  const plainSplash = ({ title, text, url }) => {
     const TITLE = editable(dom.children(dom.div('title'), dom.text(title)));
     const TEXT = editable(dom.children(dom.div('text'), dom.text(text)));
     const URL = editable(dom.children(dom.div('url'), dom.text(url)));
 
+    const serializer = () => {
+      return {
+        title: TITLE.innerText,
+        text: TEXT.innerText,
+        url: URL.innerText
+      };
+    };
+
+    return [serializer, TITLE, TEXT, URL];
+  };
+
+  const splash = ({ title, text, url, file }) => {
+    const [serializer, ...elements] = file ? fileSplash({ file }) : plainSplash({ title, text, url });
+
     const elem = dom.children(
       dom.div('splash'),
-      TITLE, TEXT, URL,
+      ...elements,
       dom.children(
         dom.div(),
         dom.button('Cancel', () => {
           elem.remove();
         }),
         dom.button('Save', () => {
-          const title = TITLE.innerText;
-          const text = TEXT.innerText;
-          const url = URL.innerText;
+          const data = serializer();
+          const save = file ? saveFileShare(data) : savePlainShare(data);
 
-          savePlainShare({ title, text, url }).then(() => {
+          save.then(() => {
             events.emit('render');
           }).catch(e => {
             console.error(e);
