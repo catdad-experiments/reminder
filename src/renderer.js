@@ -18,15 +18,18 @@ export default ({ events, db, dom }) => {
       card,
       dom.children(
         dom.div(),
-        isUrl(title) ? dom.link(title, title) : dom.text(`${id} title: ${title}`)
+        dom.text(`${id} title: `),
+        isUrl(title) ? dom.link(title, title) : dom.text(`${title}`)
       ),
       dom.children(
         dom.div(),
-        isUrl(text) ? dom.link(text, text) : dom.text(`text: ${text}`)
+        dom.text('text: '),
+        isUrl(text) ? dom.link(text, text) : dom.text(`${text}`)
       ),
       dom.children(
         dom.div(),
-        isUrl(url) ? dom.link(url, url) : dom.text(`text: ${url}`)
+        dom.text('url: '),
+        isUrl(url) ? dom.link(url, url) : dom.text(`${url}`)
       )
     );
   };
