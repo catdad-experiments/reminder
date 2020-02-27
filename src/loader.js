@@ -140,17 +140,19 @@ export default () => {
   Promise.all([
     load('./event-emitter.js'),
     load('./db.js'),
+    load('./dom.js'),
     load('./receiver.js'),
     load('./renderer.js'),
     load('./sample.js'),
   ]).then(async ([
     eventEmitter,
     DB,
+    dom,
     ...modules
   ]) => {
     // set up a global event emitter
     const db = await DB();
-    const context = { events: eventEmitter(), load, db };
+    const context = { events: eventEmitter(), load, dom, db };
     const destroys = await map(modules, mod => mod(context));
 
     context.events.on('error', function (err) {
