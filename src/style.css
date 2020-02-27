@@ -1,7 +1,7 @@
 :root {
-  --controls-height: 3em;
   --full: calc(var(--vh, 1vh) * 100);
   --limit: 600px;
+  --spacing: 1em;
 
   --darkest: #202124;
   --dark: #27292b;
@@ -109,7 +109,7 @@ a {
   min-height: 100vh;
   align-items: center;
   justify-content: center;
-  padding-bottom: var(--controls-height)
+  padding-bottom: var(--spacing)
 }
 
 /* MENU */
@@ -170,7 +170,7 @@ a {
   border-radius: 5px;
   box-shadow: 0px 4px 8px -4px black;
   overflow: hidden;
-  margin: 20px auto;
+  margin: var(--spacing) auto 0;
 }
 
 .card div {
