@@ -3,20 +3,44 @@
 export default ({ events, db, dom }) => {
   const editable = (elem) => dom.props(elem, { contenteditable: '' });
 
+  const arrayBuffer = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = e => reject(e);
+
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
+  const saveFileShare = async ({ file }) => {
+    console.log(file.name);
+    console.log(file.type);
+
+    const { name: filename, type: filetype, size: filesize } = file;
+    const filebuffer = await arrayBuffer(file);
+
+    const result = await db.save({ filename, filetype, filesize, filebuffer });
+    console.log(result);
+  };
+
   const savePlainShare = async ({ title, text, url }) => {
     const result = await db.save({ title, text, url });
     console.log(result);
   };
 
-  const saveFileShare = async ({ file }) => {
-
-  };
-
   const fileSplash = ({ file }) => {
-    const IMG = dom.img(file);
-    const serializer = () => file;
+    const BODY = dom.children(
+      dom.div(),
+      dom.img(file),
+      dom.children(dom.div(), dom.text(`file name: ${file.name}`)),
+      dom.children(dom.div(), dom.text(`file type: ${file.type}`)),
+      dom.children(dom.div(), dom.text(`file size: ${file.size}`))
+    );
+    const serializer = () => ({ file });
 
-    return [serializer, IMG];
+    return [serializer, BODY];
   };
 
   const plainSplash = ({ title, text, url }) => {
@@ -39,7 +63,7 @@ export default ({ events, db, dom }) => {
     const [serializer, ...elements] = file ? fileSplash({ file }) : plainSplash({ title, text, url });
 
     const elem = dom.children(
-      dom.div('splash'),
+      dom.classname(dom.div(), 'splash', 'limit'),
       ...elements,
       dom.children(
         dom.div(),

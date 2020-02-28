@@ -3,13 +3,13 @@ const isUrl = text => /^https?:\/\/.+/.test(text);
 export default ({ events, db, dom }) => {
   const elem = document.querySelector('#main');
 
-  const renderFile = (card, { file }) => {
+  const renderFile = (card, { filebuffer, filename, filetype, filesize }) => {
     dom.children(
       card,
-      dom.children(dom.div(), dom.text(`file name: ${file.name}`)),
-      dom.children(dom.div(), dom.text(`file size: ${file.size}`)),
-      dom.children(dom.div(), dom.text(`file type: ${file.type}`)),
-      dom.img(file)
+      dom.children(dom.div(), dom.text(`file name: ${filename}`)),
+      dom.children(dom.div(), dom.text(`file type: ${filetype}`)),
+      dom.children(dom.div(), dom.text(`file size: ${filesize}`)),
+      dom.img(new Blob([filebuffer]))
     );
   };
 
@@ -56,7 +56,7 @@ export default ({ events, db, dom }) => {
         return;
       }
 
-      if (record.file) {
+      if (record.filebuffer) {
         renderFile(card, record);
       } else {
         renderPlain(card, record);
