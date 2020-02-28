@@ -3,12 +3,11 @@ const isUrl = text => /^https?:\/\/.+/.test(text);
 export default ({ events, db, dom }) => {
   const elem = document.querySelector('#main');
 
-  const renderFile = (card, { filebuffer, filename, filetype, filesize }) => {
+  const renderFile = (card, { filebuffer, filename, filetype }) => {
     dom.children(
       card,
       dom.children(dom.div(), dom.text(`file name: ${filename}`)),
       dom.children(dom.div(), dom.text(`file type: ${filetype}`)),
-      dom.children(dom.div(), dom.text(`file size: ${filesize}`)),
       dom.img(new Blob([filebuffer]))
     );
   };

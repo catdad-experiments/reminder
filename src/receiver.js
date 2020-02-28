@@ -18,10 +18,10 @@ export default ({ events, db, dom }) => {
     console.log(file.name);
     console.log(file.type);
 
-    const { name: filename, type: filetype, size: filesize } = file;
+    const { name: filename, type: filetype } = file;
     const filebuffer = await arrayBuffer(file);
 
-    const result = await db.save({ filename, filetype, filesize, filebuffer });
+    const result = await db.save({ filename, filetype, filebuffer });
     console.log(result);
   };
 
