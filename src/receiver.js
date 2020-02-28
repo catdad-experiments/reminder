@@ -44,19 +44,19 @@ export default ({ events, db, dom }) => {
   };
 
   const plainSplash = ({ title, text, url }) => {
-    const TITLE = editable(dom.children(dom.div('title'), dom.text(title)));
-    const TEXT = editable(dom.children(dom.div('text'), dom.text(text)));
-    const URL = editable(dom.children(dom.div('url'), dom.text(url)));
+    const TITLE = title ? editable(dom.children(dom.div('title'), dom.text(title))) : null;
+    const TEXT = text ? editable(dom.children(dom.div('text'), dom.text(text))) : null;
+    const URL = url ? editable(dom.children(dom.div('url'), dom.text(url))) : null;
 
     const serializer = () => {
       return {
-        title: TITLE.innerText,
-        text: TEXT.innerText,
-        url: URL.innerText
+        title: TITLE ? TITLE.innerText || null : null,
+        text: TEXT ? TEXT.innerText || null : null,
+        url: URL ? URL.innerText || null : null
       };
     };
 
-    return [serializer, TITLE, TEXT, URL];
+    return [serializer, TITLE, TEXT, URL].filter(i => !!i);
   };
 
   const splash = ({ title, text, url, file }) => {

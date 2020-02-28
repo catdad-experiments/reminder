@@ -17,20 +17,20 @@ export default ({ events, db, dom }) => {
   const renderPlain = (card, { title, text, url }) => {
     dom.children(
       card,
-      dom.children(
+      title ? dom.children(
         dom.div('title'),
         isUrl(title) ? dom.link(title, title) : dom.text(`${title}`)
-      ),
-      dom.children(
+      ) : dom.nill(),
+      text ? dom.children(
         dom.div(),
         dom.text('text: '),
         isUrl(text) ? dom.link(text, text) : dom.text(`${text}`)
-      ),
-      dom.children(
+      ) : dom.nill(),
+      url ? dom.children(
         dom.div(),
         dom.text('url: '),
         isUrl(url) ? dom.link(url, url) : dom.text(`${url}`)
-      )
+      ) : dom.nill()
     );
   };
 
