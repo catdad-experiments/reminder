@@ -12,12 +12,11 @@ export default ({ events, db, dom }) => {
     );
   };
 
-  const renderPlain = (card, { id, title, text, url }) => {
+  const renderPlain = (card, { title, text, url }) => {
     dom.children(
       card,
       dom.children(
-        dom.div(),
-        dom.text(`${id} title: `),
+        dom.div('title'),
         isUrl(title) ? dom.link(title, title) : dom.text(`${title}`)
       ),
       dom.children(

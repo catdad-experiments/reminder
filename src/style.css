@@ -174,8 +174,16 @@ a {
 }
 
 .card div {
-  padding: 0 10px;
-  margin: 10px 0;
+  --pad-size: 10px;
+  padding-left: var(--pad-size);
+  padding-right: var(--pad-size);
+  margin-top: var(--pad-size);
+  margin-bottom: var(--pad-size);
+}
+
+.card .title {
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
 .card img {
