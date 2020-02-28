@@ -179,6 +179,7 @@ a {
 }
 
 .card img {
+  display: block;
   max-width: 100%;
 }
 
