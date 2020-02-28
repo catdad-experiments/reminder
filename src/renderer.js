@@ -6,8 +6,10 @@ export default ({ events, db, dom }) => {
   const renderFile = (card, { filebuffer, filename, filetype }) => {
     dom.children(
       card,
-      dom.children(dom.div(), dom.text(`file name: ${filename}`)),
-      dom.children(dom.div(), dom.text(`file type: ${filetype}`)),
+      dom.children(
+        dom.div('title'),
+        dom.text(`${filename} (${filetype})`)
+      ),
       dom.img(new Blob([filebuffer]))
     );
   };
