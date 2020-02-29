@@ -54,21 +54,14 @@ const link = (str, href) => children(props(elem('a'), { href }), text(str));
 
 const button = (str, onClick) => click(children(elem('button'), text(str)), onClick);
 
-const img = (srcOrBlob) => {
-  const el = elem('img');
-  const isBlob = (srcOrBlob instanceof Blob);
-  const url = isBlob ? URL.createObjectURL(srcOrBlob) : srcOrBlob;
-
-  el.onload = () => {
-    if (isBlob) {
-      URL.revokeObjectURL(url);
+const img = (srcOrBlob) => Object.assign(elem('img'), {
+  onload: ({ target }) => {
+    if (srcOrBlob instanceof Blob) {
+      URL.revokeObjectURL(target.src);
     }
-  };
-
-  el.src = url;
-
-  return el;
-};
+  },
+  src: (srcOrBlob instanceof Blob) ? URL.createObjectURL(srcOrBlob) : srcOrBlob
+});
 
 export default {
   elem,
