@@ -1,5 +1,3 @@
-const isUrl = text => /^https?:\/\/.+/.test(text);
-
 export default ({ events, db, dom }) => {
   const elem = document.querySelector('#main');
 
@@ -14,23 +12,48 @@ export default ({ events, db, dom }) => {
     );
   };
 
+  const renderField = field => {
+    if (!field) {
+      return dom.nill();
+    }
+
+    return dom.fragment(
+      ...field.split('\n').map(i => i.trim()).map(line => {
+        const urls = line.match(/[a-z]+:\/\/[^ ]+/ig);
+
+        if (!urls) {
+          return dom.p(line);
+        }
+
+        const lineElements = [];
+        let tempLine = line;
+
+        for (let url of urls) {
+          const [before, ...rest] = tempLine.split(url);
+
+          lineElements.push(dom.span(before));
+          lineElements.push(dom.link(url, url));
+          tempLine = rest.join(url);
+        }
+
+        if (tempLine) {
+          lineElements.push(dom.span(tempLine));
+        }
+
+        return dom.children(
+          dom.p(),
+          dom.fragment(...lineElements)
+        );
+      })
+    );
+  };
+
   const renderPlain = (card, { title, text, url }) => {
     dom.children(
       card,
-      title ? dom.children(
-        dom.div('title'),
-        isUrl(title) ? dom.link(title, title) : dom.text(`${title}`)
-      ) : dom.nill(),
-      text ? dom.children(
-        dom.div(),
-        dom.text('text: '),
-        isUrl(text) ? dom.link(text, text) : dom.text(`${text}`)
-      ) : dom.nill(),
-      url ? dom.children(
-        dom.div(),
-        dom.text('url: '),
-        isUrl(url) ? dom.link(url, url) : dom.text(`${url}`)
-      ) : dom.nill()
+      dom.children(dom.div('title'), renderField(title)),
+      dom.children(dom.div(), renderField(text)),
+      dom.children(dom.div(), renderField(url)),
     );
   };
 
