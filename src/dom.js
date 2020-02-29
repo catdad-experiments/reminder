@@ -18,22 +18,23 @@ const props = (el, obj) => {
   return el;
 };
 
-const children = (el, ...childs) => {
-  for (let child of childs) {
-    el.appendChild(child);
+const children = (parent, ...elements) => {
+  for (let elem of elements) {
+    parent.appendChild(elem);
   }
 
-  return el;
+  return parent;
 };
 
 const empty = (elem) => {
   while (elem.firstChild) {
     elem.removeChild(elem.firstChild);
   }
+
   return elem;
 };
 
-const fragment = (...childs) => children(document.createDocumentFragment(), ...childs);
+const fragment = (...elements) => children(document.createDocumentFragment(), ...elements);
 
 const elem = (tag) => document.createElement(tag);
 
@@ -46,7 +47,7 @@ const div = (className) => classname(elem('div'), className);
 const p = (str) => {
   const el = elem('p');
 
-  if (str !== undefined) {
+  if (typeof str === 'string') {
     el.appendChild(text(str));
   }
 
