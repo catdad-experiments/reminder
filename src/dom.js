@@ -1,16 +1,16 @@
-const handle = (el, name, handler) => {
+export const handle = (el, name, handler) => {
   el.addEventListener(name, handler, false);
   return el;
 };
 
-const click = (el, handler) => handle(el, 'click', handler);
+export const click = (el, handler) => handle(el, 'click', handler);
 
-const classname = (el, ...classes) => {
+export const classname = (el, ...classes) => {
   classes.forEach(c => c && el.classList.add(c));
   return el;
 };
 
-const props = (el, obj) => {
+export const props = (el, obj) => {
   for (let key in obj) {
     el.setAttribute(key, obj[key]);
   }
@@ -18,7 +18,7 @@ const props = (el, obj) => {
   return el;
 };
 
-const children = (parent, ...elements) => {
+export const children = (parent, ...elements) => {
   for (let elem of elements) {
     parent.appendChild(elem);
   }
@@ -26,7 +26,7 @@ const children = (parent, ...elements) => {
   return parent;
 };
 
-const empty = (elem) => {
+export const empty = (elem) => {
   while (elem.firstChild) {
     elem.removeChild(elem.firstChild);
   }
@@ -34,27 +34,27 @@ const empty = (elem) => {
   return elem;
 };
 
-const fragment = (...elements) => children(document.createDocumentFragment(), ...elements);
+export const fragment = (...elements) => children(document.createDocumentFragment(), ...elements);
 
-const elem = (tag) => document.createElement(tag);
+export const elem = (tag) => document.createElement(tag);
 
-const text = (str) => document.createTextNode(str);
+export const text = (str) => document.createTextNode(str);
 
-const nill = () => text('');
+export const nill = () => text('');
 
-const div = (className) => classname(elem('div'), className);
+export const div = (className) => classname(elem('div'), className);
 
-const p = (str) => children(elem('p'), typeof str === 'string' ? text(str) : nill());
+export const p = (str) => children(elem('p'), typeof str === 'string' ? text(str) : nill());
 
-const span = (str) => children(elem('span'), typeof str === 'string' ? text(str) : nill());
+export const span = (str) => children(elem('span'), typeof str === 'string' ? text(str) : nill());
 
-const h1 = (str) => children(elem('h1'), typeof str == 'string' ? text(str) : nill());
+export const h1 = (str) => children(elem('h1'), typeof str == 'string' ? text(str) : nill());
 
-const link = (str, href) => children(props(elem('a'), { href }), text(str));
+export const link = (str, href) => children(props(elem('a'), { href }), text(str));
 
-const button = (str, onClick) => click(children(elem('button'), text(str)), onClick);
+export const button = (str, onClick) => click(children(elem('button'), text(str)), onClick);
 
-const img = (srcOrBlob) => Object.assign(elem('img'), {
+export const img = (srcOrBlob) => Object.assign(elem('img'), {
   onload: ({ target }) => {
     if (srcOrBlob instanceof Blob) {
       URL.revokeObjectURL(target.src);
@@ -62,23 +62,3 @@ const img = (srcOrBlob) => Object.assign(elem('img'), {
   },
   src: (srcOrBlob instanceof Blob) ? URL.createObjectURL(srcOrBlob) : srcOrBlob
 });
-
-export default {
-  elem,
-  nill,
-  fragment,
-  text,
-  div,
-  p,
-  span,
-  h1,
-  link,
-  button,
-  img,
-  props,
-  classname,
-  children,
-  handle,
-  click,
-  empty
-};
