@@ -168,17 +168,19 @@ a {
 
 .card {
   --pad-size: 10px;
+  --shadow: 0px 4px 8px -4px black;
+  --shadow-raised: 0 6px 16px -2px black, 0 0 2px inset var(--foreground);
 
   width: calc(100% - 40px);
   background: var(--lvl2);
   border-radius: 5px;
-  box-shadow: 0px 4px 8px -4px black;
+  box-shadow: var(--shadow);
   overflow: hidden;
   margin: var(--spacing) auto 0;
 }
 
 .card.focused {
-  border: 2px solid red;
+  box-shadow: var(--shadow-raised);
 }
 
 .card div {
