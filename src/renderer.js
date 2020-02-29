@@ -22,7 +22,7 @@ export default ({ events, db, dom }) => {
         dom.div('text'),
         dom.text(`${filename} (${filetype})`)
       ),
-      dom.children(dom.div(), dom.button('notify', async () => {
+      dom.children(dom.div('buttons'), dom.click(dom.icon('notifications_active'), async () => {
         const image = URL.createObjectURL(new Blob([filebuffer]));
         await notify(filename, {
           image,
@@ -73,9 +73,9 @@ export default ({ events, db, dom }) => {
     dom.children(
       card,
       dom.children(dom.div('title'), renderField(title)),
-      dom.children(dom.div(), renderField(text)),
-      dom.children(dom.div(), renderField(url)),
-      dom.children(dom.div(), dom.button('notify', async () => {
+      dom.children(dom.div('text'), renderField(text)),
+      dom.children(dom.div('text'), renderField(url)),
+      dom.children(dom.div('buttons'), dom.click(dom.icon('notifications_active'), async () => {
         await notify(title, {
           body: `${text}`,
           tag: `${id}`,
