@@ -191,7 +191,7 @@ a {
 
 .card p {
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.5;
 }
 
 .card .title {
@@ -207,6 +207,7 @@ a {
   padding: var(--pad-size);
   display: flex;
   justify-content: flex-end;
+  cursor: default;
 }
 
 .card .edit {
