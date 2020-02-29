@@ -52,19 +52,19 @@ export default ({ events, db, dom }) => {
   );
 
   const plainSplash = ({ title, text, url }) => {
-    const TITLE = title ? field(title, 'Title...', ['title', 'edit']) : null;
-    const TEXT = text ? field(text, 'Text...', ['text', 'edit']) : null;
-    const URL = url ? field(url, 'URL...', ['text', 'edit']) : null;
+    const TITLE = field(title || '', 'Title...', ['title', 'edit']);
+    const TEXT = field(text || '', 'Text...', ['text', 'edit']);
+    const URL = field(url || '', 'URL...', ['text', 'edit']);
 
     const serializer = () => {
       return {
-        title: TITLE ? TITLE.innerText || null : null,
-        text: TEXT ? TEXT.innerText || null : null,
-        url: URL ? URL.innerText || null : null
+        title: TITLE ? TITLE.innerText.trim() || null : null,
+        text: TEXT ? TEXT.innerText.trim() || null : null,
+        url: URL ? URL.innerText.trim() || null : null
       };
     };
 
-    return [serializer, TITLE, TEXT, URL].filter(i => !!i);
+    return [serializer, TITLE, TEXT, URL];
   };
 
   const splash = ({ title, text, url, file }) => {
