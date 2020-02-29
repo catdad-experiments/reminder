@@ -48,12 +48,25 @@ export default ({ events, db, dom }) => {
     );
   };
 
-  const renderPlain = (card, { title, text, url }) => {
+  const renderPlain = (card, { id, title, text, url }) => {
     dom.children(
       card,
       dom.children(dom.div('title'), renderField(title)),
       dom.children(dom.div(), renderField(text)),
       dom.children(dom.div(), renderField(url)),
+      dom.children(dom.div(), dom.button('notify', async () => {
+        const permission = await Notification.requestPermission();
+
+        if (permission !== 'granted') {
+          return;
+        }
+
+        const registration = await navigator.serviceWorker.ready;
+        registration.showNotification(title, {
+          body: `${text}`,
+          tag: `${id}`
+        });
+      }))
     );
   };
 
