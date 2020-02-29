@@ -85,7 +85,7 @@ export default ({ events, db, dom }) => {
       }
 
       card.classList.add('focused');
-      card.scrollIntoView();
+      card.scrollIntoView({ block: 'center', behavior: 'smooth' });
     });
   };
 
