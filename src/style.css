@@ -235,8 +235,7 @@ a {
 }
 
 .controls button.selected {
-  background: var(--accent);
-  color: var(--accent-contract);
+  border: 2px solid var(--accent);
 }
 
 /* SPLASH */
