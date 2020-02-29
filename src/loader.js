@@ -123,7 +123,7 @@ export default () => {
   function load(name) {
     // get around eslint@5 not supporting dynamic import
     // this is ugly, but I also don't care
-    return (new Function(`return import('${name}')`))().then(m => m.default);
+    return (new Function(`return import('${name}')`))().then(m => m.default || m);
   }
 
   async function map(arr, func) {
