@@ -44,23 +44,13 @@ const nill = () => text('');
 
 const div = (className) => classname(elem('div'), className);
 
-const p = (str) => {
-  const el = elem('p');
+const p = (str) => children(elem('p'), typeof str === 'string' ? text(str) : nill());
 
-  if (typeof str === 'string') {
-    el.appendChild(text(str));
-  }
+const span = (str) => children(elem('span'), typeof str === 'string' ? text(str) : nill());
 
-  return el;
-};
-
-const span = (str) => children(elem('span'), text(str || ''));
-
-const h1 = (str) => children(elem('h1'), text(str));
+const h1 = (str) => children(elem('h1'), typeof str == 'string' ? text(str) : nill());
 
 const link = (str, href) => children(props(elem('a'), { href }), text(str));
-
-const linkBlock = (className, str, href) => children(div(className), link(str, href));
 
 const button = (str, onClick) => click(children(elem('button'), text(str)), onClick);
 
@@ -90,7 +80,6 @@ export default {
   span,
   h1,
   link,
-  linkBlock,
   button,
   img,
   props,
