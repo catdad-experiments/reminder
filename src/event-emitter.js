@@ -27,8 +27,8 @@ export default () => {
   };
 
   api.once = function once(name, func) {
-    return addEvent(name, func, function onceWrapper() {
-      func.apply(null, [].slice.call(arguments));
+    return addEvent(name, func, function onceWrapper(...args) {
+      func(...args);
       removeEvent(name, func);
     });
   };
