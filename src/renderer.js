@@ -1,3 +1,15 @@
+const notify = async (title, opts) => {
+  const permission = await Notification.requestPermission();
+
+  if (permission !== 'granted') {
+    return;
+  }
+
+  const registration = await navigator.serviceWorker.ready;
+
+  return registration.showNotification(title, opts);
+};
+
 export default ({ events, db, dom }) => {
   const elem = document.querySelector('#main');
   let FOCUS_ID;
@@ -5,11 +17,18 @@ export default ({ events, db, dom }) => {
   const renderFile = (card, { filebuffer, filename, filetype }) => {
     dom.children(
       card,
+      dom.img(new Blob([filebuffer])),
       dom.children(
-        dom.div('title'),
+        dom.div('text'),
         dom.text(`${filename} (${filetype})`)
       ),
-      dom.img(new Blob([filebuffer]))
+      dom.children(dom.div(), dom.button('notify', async () => {
+        const image = URL.createObjectURL(new Blob([filebuffer]));
+        await notify(filename, {
+          image
+        });
+        URL.revokeObjectURL(image);
+      }))
     );
   };
 
@@ -56,14 +75,7 @@ export default ({ events, db, dom }) => {
       dom.children(dom.div(), renderField(text)),
       dom.children(dom.div(), renderField(url)),
       dom.children(dom.div(), dom.button('notify', async () => {
-        const permission = await Notification.requestPermission();
-
-        if (permission !== 'granted') {
-          return;
-        }
-
-        const registration = await navigator.serviceWorker.ready;
-        registration.showNotification(title, {
+        await notify(title, {
           body: `${text}`,
           tag: `${id}`
         });
