@@ -1,8 +1,6 @@
 /* eslint-disable no-console */
 
 export default ({ events, db, dom }) => {
-  const editable = (elem) => dom.props(elem, { contenteditable: '' });
-
   const arrayBuffer = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -43,10 +41,20 @@ export default ({ events, db, dom }) => {
     return [serializer, BODY];
   };
 
+  const field = (content, title, classnames) => dom.props(
+    dom.children(
+      dom.classname(dom.div(), ...classnames),
+      dom.text(content)
+    ), {
+      contenteditable: '',
+      'data-title': title
+    }
+  );
+
   const plainSplash = ({ title, text, url }) => {
-    const TITLE = title ? editable(dom.children(dom.div('title'), dom.text(title))) : null;
-    const TEXT = text ? editable(dom.children(dom.div('text'), dom.text(text))) : null;
-    const URL = url ? editable(dom.children(dom.div('url'), dom.text(url))) : null;
+    const TITLE = title ? field(title, 'Title...', ['title', 'edit']) : null;
+    const TEXT = text ? field(text, 'Text...', ['text', 'edit']) : null;
+    const URL = url ? field(url, 'URL...', ['text', 'edit']) : null;
 
     const serializer = () => {
       return {
@@ -63,25 +71,28 @@ export default ({ events, db, dom }) => {
     const [serializer, ...elements] = file ? fileSplash({ file }) : plainSplash({ title, text, url });
 
     const elem = dom.children(
-      dom.classname(dom.div(), 'splash', 'limit'),
-      ...elements,
+      dom.div('splash'),
       dom.children(
-        dom.div(),
-        dom.button('Cancel', () => {
-          elem.remove();
-        }),
-        dom.button('Save', () => {
-          const data = serializer();
-          const save = file ? saveFileShare(data) : savePlainShare(data);
-
-          save.then(() => {
-            events.emit('render');
-          }).catch(e => {
-            console.error(e);
-          }).then(() => {
+        dom.div('limit'),
+        dom.children(dom.div('card'), ...elements),
+        dom.children(
+          dom.div('controls'),
+          dom.button('Cancel', () => {
             elem.remove();
-          });
-        })
+          }),
+          dom.button('Save', () => {
+            const data = serializer();
+            const save = file ? saveFileShare(data) : savePlainShare(data);
+
+            save.then(() => {
+              events.emit('render');
+            }).catch(e => {
+              console.error(e);
+            }).then(() => {
+              elem.remove();
+            });
+          })
+        )
       )
     );
 

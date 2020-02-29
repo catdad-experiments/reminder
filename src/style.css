@@ -165,6 +165,8 @@ a {
 /* CARD */
 
 .card {
+  --pad-size: 10px;
+
   width: calc(100% - 40px);
   background: var(--lvl2);
   border-radius: 5px;
@@ -174,7 +176,6 @@ a {
 }
 
 .card div {
-  --pad-size: 10px;
   padding-left: var(--pad-size);
   padding-right: var(--pad-size);
   margin-top: var(--pad-size);
@@ -190,16 +191,45 @@ a {
   max-width: 100%;
 }
 
+.card .edit {
+  position: relative;
+}
+.card .edit:empty::after {
+  content: attr(data-title);
+  padding: 0 var(--pad-size);
+  opacity: 0.5;
+  position: absolute;
+  top: 0;
+  left: 0;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* CONTROLS */
+
+.controls {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.controls button {
+  width: 6rem;
+  padding: 5px;
+  margin: 5px;
+}
+
 /* SPLASH */
 
 .splash {
   position: fixed;
+  display: flex;
+  align-items: center;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   margin: auto;
-  background: red;
+  background: var(--background);
 }
 
 .splash img {
