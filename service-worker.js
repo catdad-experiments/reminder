@@ -1,4 +1,4 @@
-/* globals self */
+/* globals self, clients */
 
 const VERSION = 'v1.0.0';
 const WORKER = '👷';
@@ -47,4 +47,24 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(fetch(event.request));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  const { tag } = event.notification;
+
+  event.notification.close();
+
+  event.waitUntil(async function() {
+    const allClients = await clients.matchAll({
+      includeUncontrolled: true
+    });
+
+    let owner = allClients[0] || await clients.openWindow('..');
+
+    if (allClients[0]) {
+      owner.focus();
+    }
+
+    owner.postMessage({ action: 'notification-click', id: Number(tag) });
+  }());
 });
