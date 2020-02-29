@@ -183,11 +183,15 @@ a {
   box-shadow: var(--shadow-raised);
 }
 
-.card div {
+.card .title, .card .text {
   padding-left: var(--pad-size);
   padding-right: var(--pad-size);
-  margin-top: var(--pad-size);
-  margin-bottom: var(--pad-size);
+  padding-top: var(--pad-size);
+}
+
+.card p {
+  margin: 0;
+  line-height: 1.2;
 }
 
 .card .title {
@@ -200,6 +204,7 @@ a {
 }
 
 .card .buttons {
+  padding: var(--pad-size);
   display: flex;
   justify-content: flex-end;
 }
