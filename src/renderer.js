@@ -72,9 +72,9 @@ export default ({ events, db, dom }) => {
   const renderPlain = (card, { id, title, text, url, dateTime }) => {
     dom.children(
       card,
-      dom.children(dom.div('title'), renderField(title)),
-      dom.children(dom.div('text'), renderField(text)),
-      dom.children(dom.div('text'), renderField(url)),
+      title ? dom.children(dom.div('title'), renderField(title)) : dom.nill(),
+      text ? dom.children(dom.div('text'), renderField(text)) : dom.nill(),
+      url ? dom.children(dom.div('text'), renderField(url)) : dom.nill(),
       dom.children(dom.div('buttons'), dom.click(dom.icon('notifications_active'), async () => {
         await notify(title, {
           body: `${text}`,
