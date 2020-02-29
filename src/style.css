@@ -8,6 +8,8 @@
   --middle: #777777;
   --light: #e5e5e5;
   --lightest: #f0f0f0;
+  --accent: #e2a316;
+  --accent-contract: var(--darkest);
 
   --DARK-lvl2: var(--dark);
   --DARK-background: var(--darkest);
@@ -212,10 +214,29 @@ a {
   margin-top: 20px;
 }
 
+.controls > div {
+  margin: 0 0 20px 0;
+}
+
 .controls button {
-  width: 6rem;
-  padding: 5px;
+  width: 10rem;
+  height: 3rem;
+  padding: 0.5rem 0px;
   margin: 5px;
+  background: rgba(128, 128, 128, 0.1);
+  color: var(--foreground);
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  vertical-align: top;
+  line-height: 1.5
+}
+
+.controls button.selected {
+  background: var(--accent);
+  color: var(--accent-contract);
 }
 
 /* SPLASH */

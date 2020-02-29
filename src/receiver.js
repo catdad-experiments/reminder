@@ -12,19 +12,19 @@ export default ({ events, db, dom }) => {
     });
   };
 
-  const saveFileShare = async ({ file }) => {
+  const saveFileShare = async ({ file, dateTime }) => {
     console.log(file.name);
     console.log(file.type);
 
     const { name: filename, type: filetype } = file;
     const filebuffer = await arrayBuffer(file);
 
-    const result = await db.save({ filename, filetype, filebuffer });
+    const result = await db.save({ filename, filetype, filebuffer, dateTime });
     console.log(result);
   };
 
-  const savePlainShare = async ({ title, text, url }) => {
-    const result = await db.save({ title, text, url });
+  const savePlainShare = async ({ title, text, url, dateTime }) => {
+    const result = await db.save({ title, text, url, dateTime });
     console.log(result);
   };
 
@@ -67,31 +67,74 @@ export default ({ events, db, dom }) => {
     return [serializer, TITLE, TEXT, URL];
   };
 
+  const reminders = () => {
+    const now = new Date();
+    const tonight = new Date(new Date(now).setHours(21, 0, 0));
+    const tomorrowMorning = new Date(new Date(now).setHours(24 + 8, 0, 0));
+    const tomorrowEvening = new Date(new Date(now).setHours(24 + 21, 0, 0));
+
+    let result;
+
+    const TONIGHT = dom.button('Tonight', () => {
+      deselect();
+      TONIGHT.classList.add('selected');
+
+      result = tonight;
+    });
+    const MORNING = dom.button('Tomorrow Morning', () => {
+      deselect();
+      MORNING.classList.add('selected');
+
+      result = tomorrowMorning;
+    });
+    const EVENING = dom.button('Tomorrow Evening', () => {
+      deselect();
+      EVENING.classList.add('selected');
+
+      result = tomorrowEvening;
+    });
+
+    const deselect = () => void [TONIGHT, MORNING, EVENING].forEach(e => e.classList.remove('selected'));
+
+    TONIGHT.click();
+
+    return [() => result, TONIGHT, MORNING, EVENING];
+  };
+
   const splash = ({ title, text, url, file }) => {
-    const [serializer, ...elements] = file ? fileSplash({ file }) : plainSplash({ title, text, url });
+    const [serializer, ...cardFields] = file ? fileSplash({ file }) : plainSplash({ title, text, url });
+    const [reminder, ...reminderButtons] = reminders();
+
+    const controls = dom.fragment(
+      dom.button('Cancel', () => {
+        elem.remove();
+      }),
+      dom.button('Save', () => {
+        const data = serializer();
+        data.dateTime = reminder().getTime();
+        console.log(data);
+
+        const save = file ? saveFileShare(data) : savePlainShare(data);
+
+        save.then(() => {
+          events.emit('render');
+        }).catch(e => {
+          console.error(e);
+        }).then(() => {
+          elem.remove();
+        });
+      })
+    );
 
     const elem = dom.children(
       dom.div('splash'),
       dom.children(
         dom.div('limit'),
-        dom.children(dom.div('card'), ...elements),
+        dom.children(dom.div('card'), ...cardFields),
         dom.children(
           dom.div('controls'),
-          dom.button('Cancel', () => {
-            elem.remove();
-          }),
-          dom.button('Save', () => {
-            const data = serializer();
-            const save = file ? saveFileShare(data) : savePlainShare(data);
-
-            save.then(() => {
-              events.emit('render');
-            }).catch(e => {
-              console.error(e);
-            }).then(() => {
-              elem.remove();
-            });
-          })
+          dom.children(dom.div(), dom.p('Remind me:'), ...reminderButtons),
+          dom.children(dom.div(), controls)
         )
       )
     );
