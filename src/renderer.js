@@ -14,7 +14,7 @@ export default ({ events, db, dom }) => {
   const elem = document.querySelector('#main');
   let FOCUS_ID;
 
-  const renderFile = (card, { filebuffer, filename, filetype }) => {
+  const renderFile = (card, { filebuffer, filename, filetype, dateTime }) => {
     dom.children(
       card,
       dom.img(new Blob([filebuffer])),
@@ -25,7 +25,8 @@ export default ({ events, db, dom }) => {
       dom.children(dom.div(), dom.button('notify', async () => {
         const image = URL.createObjectURL(new Blob([filebuffer]));
         await notify(filename, {
-          image
+          image,
+          timestamp: dateTime
         });
         URL.revokeObjectURL(image);
       }))
@@ -68,7 +69,7 @@ export default ({ events, db, dom }) => {
     );
   };
 
-  const renderPlain = (card, { id, title, text, url }) => {
+  const renderPlain = (card, { id, title, text, url, dateTime }) => {
     dom.children(
       card,
       dom.children(dom.div('title'), renderField(title)),
@@ -77,7 +78,8 @@ export default ({ events, db, dom }) => {
       dom.children(dom.div(), dom.button('notify', async () => {
         await notify(title, {
           body: `${text}`,
-          tag: `${id}`
+          tag: `${id}`,
+          timestamp: dateTime
         });
       }))
     );
