@@ -177,6 +177,10 @@ a {
   margin: var(--spacing) auto 0;
 }
 
+.card.focused {
+  border: 2px solid red;
+}
+
 .card div {
   padding-left: var(--pad-size);
   padding-right: var(--pad-size);

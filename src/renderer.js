@@ -1,5 +1,6 @@
 export default ({ events, db, dom }) => {
   const elem = document.querySelector('#main');
+  let FOCUS_ID;
 
   const renderFile = (card, { filebuffer, filename, filetype }) => {
     dom.children(
@@ -70,27 +71,40 @@ export default ({ events, db, dom }) => {
     );
   };
 
+  const getCards = () => [].slice.call(document.querySelectorAll('.card'))
+    .map(card => {
+      return {
+        card, id: Number(card.getAttribute('data-id'))
+      };
+    });
+
+  const applyCardFocus = () => {
+    getCards().forEach(({ card, id }) => {
+      if (id !== FOCUS_ID) {
+        return void card.classList.remove('focused');
+      }
+
+      card.classList.add('focused');
+      card.scrollIntoView();
+    });
+  };
+
   const onRender = async () => {
-    const cards = [].slice.call(document.querySelectorAll('.card'))
-      .map(card => {
-        return {
-          card, id: Number(card.getAttribute('data-id'))
-        };
-      });
+    const cards = getCards();
 
     let currentCard;
 
     await db.each(null, record => {
-      const card = dom.props(dom.div('card'), {
-        'data-id': record.id
-      });
-
       const idx = cards.findIndex(c => c.id === record.id);
 
       if (idx !== -1) {
         currentCard = cards[idx];
         return;
       }
+
+      const card = dom.props(dom.div('card'), {
+        'data-id': record.id
+      });
 
       if (record.filebuffer) {
         renderFile(card, record);
@@ -104,11 +118,20 @@ export default ({ events, db, dom }) => {
         elem.insertBefore(card, elem.firstChild);
       }
     });
+
+    applyCardFocus();
+  };
+
+  const onRenderFocus = ({ id }) => {
+    FOCUS_ID = id;
+    applyCardFocus();
   };
 
   events.on('render', onRender);
+  events.on('render-focus', onRenderFocus);
 
   return () => {
-    events.on('render', onRender);
+    events.off('render', onRender);
+    events.off('render-focus', onRenderFocus);
   };
 };
