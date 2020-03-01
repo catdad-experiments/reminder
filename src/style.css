@@ -2,6 +2,7 @@
   --full: calc(var(--vh, 1vh) * 100);
   --limit: 600px;
   --spacing: 1em;
+  --opacity-recolor: 0.6;
 
   --darkest: #202124;
   --dark: #27292b;
@@ -217,10 +218,10 @@ i.material-icons {
   justify-content: flex-end;
   align-items: center;
   cursor: default;
+  opacity: var(--opacity-recolor);
 }
 
 .card .date {
-  opacity: 0.5;
   font-size: 0.8rem;
   font-style: italic;
 }
@@ -231,7 +232,7 @@ i.material-icons {
 .card .edit:empty::after {
   content: attr(data-title);
   padding: 0 var(--pad-size);
-  opacity: 0.5;
+  opacity: var(--opacity-recolor);
   position: absolute;
   top: 0;
   left: 0;
