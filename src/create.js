@@ -1,37 +1,60 @@
 export default ({ events, dom }) => {
-  const button = document.querySelector('#create');
+  const menu = document.querySelector('#floating-menu');
+  const trigger = document.querySelector('#create');
+  const image = document.querySelector('#create-image');
+  const note = document.querySelector('#create-note');
 
-  const sampleFileShare = () => {
-    const input = dom.props(dom.elem('input'), { type: 'file' });
-    const splash = dom.children(
-      dom.classname(dom.div(), 'splash', 'limit'),
-      dom.children(dom.div(), dom.text('Select a file to show sample share')),
-      input
-    );
+  const getFile = () => {
+    return new Promise(resolve => {
+      const input = dom.classname(
+        dom.props(dom.elem('input'), { type: 'file' }),
+        'invisible'
+      );
 
-    document.body.appendChild(splash);
+      document.body.appendChild(input);
 
-    input.onchange = (ev) => {
-      const file = ev.target.files[0];
-
-      splash.remove();
-
-      if (file) {
-        events.emit('receive-share', { file });
-      }
-    };
+      input.onchange = (ev) => {
+        const file = ev.target.files[0];
+        input.remove();
+        
+        resolve(file || null);
+      };
+      
+      input.click();
+    });
   };
-
-  const onCreate = () => {
+  
+  const onImage = () => {
+    menu.classList.remove('open');
+    
+    getFile().then(file => {
+      if (!file) {
+        return;
+      }
+      
+      events.emit('receive-share', { file });
+    });
+  };
+  
+  const onNote = () => {
+    menu.classList.remove('open');
     events.emit('receive-share', {
       title: '',
       text: ''
     });
   };
 
-  button.addEventListener('click', onCreate);
+  const onCreate = () => {
+    menu.classList.toggle('open');
+  };
+
+  trigger.addEventListener('click', onCreate);
+  image.addEventListener('click', onImage);
+  note.addEventListener('click', onNote);
 
   return () => {
-    button.removeEventListener('click', onCreate);
+    trigger.removeEventListener('click', onCreate);
+    image.removeEventListener('click', onImage);
+    note.removeEventListener('click', onNote);
   };
 };
