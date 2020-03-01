@@ -69,7 +69,7 @@ export default ({ events, db, dom }) => {
     );
   };
 
-  const renderPlain = (card, { id, title, text, url, dateTime }) => {
+  const renderPlain = (card, { id, title, text, url, remindAt }) => {
     dom.children(
       card,
       title ? dom.children(dom.div('title'), renderField(title)) : dom.nill(),
@@ -98,7 +98,7 @@ export default ({ events, db, dom }) => {
           await notify(title, {
             body: `${text}`,
             tag: `${id}`,
-            timestamp: dateTime
+            timestamp: remindAt
           });
         })
       )

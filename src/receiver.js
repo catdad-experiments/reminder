@@ -12,19 +12,19 @@ export default ({ events, db, dom }) => {
     });
   };
 
-  const saveFileShare = async ({ file, dateTime }) => {
+  const saveFileShare = async ({ file, createdAt, remindAt }) => {
     console.log(file.name);
     console.log(file.type);
 
     const { name: filename, type: filetype } = file;
     const filebuffer = await arrayBuffer(file);
 
-    const result = await db.save({ filename, filetype, filebuffer, dateTime });
+    const result = await db.save({ filename, filetype, filebuffer, createdAt, remindAt });
     console.log(result);
   };
 
-  const savePlainShare = async ({ title, text, url, dateTime }) => {
-    const result = await db.save({ title, text, url, dateTime });
+  const savePlainShare = async ({ title, text, url, createdAt, remindAt }) => {
+    const result = await db.save({ title, text, url, createdAt, remindAt });
     console.log(result);
   };
 
@@ -111,8 +111,8 @@ export default ({ events, db, dom }) => {
       }),
       dom.button('Save', () => {
         const data = serializer();
-        data.dateTime = reminder().getTime();
-        console.log(data);
+        data.createdAt = Date.now();
+        data.remindAt = reminder().getTime();
 
         const save = file ? saveFileShare(data) : savePlainShare(data);
 
