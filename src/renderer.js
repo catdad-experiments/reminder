@@ -14,6 +14,11 @@ const notify = async (title, opts) => {
   return registration.showNotification(title || 'Reminder', data);
 };
 
+const noErr = prom => prom.catch(e => {
+  // eslint-disable-next-line no-console
+  console.error('Hanlded Error:', e);
+});
+
 const dateString = date => {
   const day = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()];
   const hour = `${date.getHours() % 12 || 12} ${date.getHours() < 12 ? 'am' : 'pm'}`;
@@ -47,6 +52,10 @@ export default ({ events, db, dom }) => {
             timestamp: remindAt
           });
           URL.revokeObjectURL(image);
+        }),
+        dom.click(dom.icon('delete'), async () => {
+          card.remove();
+          await db.remove({ id });
         })
       )
     );
@@ -114,13 +123,12 @@ export default ({ events, db, dom }) => {
           text && (data.text = text);
           url && (data.url = url);
 
-          try {
-            await navigator.share(data);
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error('share error:', e);
-          }
-        }) : dom.nill()
+          await noErr(navigator.share(data));
+        }) : dom.nill(),
+        dom.click(dom.icon('delete'), () => {
+          card.remove();
+          noErr(db.remove({ id }));
+        })
       )
     );
   };
