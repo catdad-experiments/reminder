@@ -149,6 +149,7 @@ export default () => {
     load('./dom.js'),
     load('./receiver.js'),
     load('./renderer.js'),
+    load('./create.js'),
     load('./sample.js'),
   ]).then(async ([
     eventEmitter,

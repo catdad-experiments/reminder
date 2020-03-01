@@ -3,6 +3,7 @@
   --limit: 600px;
   --spacing: 1em;
   --opacity-recolor: 0.6;
+  --create-space: 4.6rem;
 
   --darkest: #202124;
   --dark: #27292b;
@@ -112,12 +113,36 @@ a {
   min-height: 100vh;
   align-items: center;
   justify-content: center;
-  padding-bottom: var(--spacing)
+  padding-bottom: calc(var(--create-space));
 }
 
 i.material-icons {
   user-select: none;
   padding: 0 0 0 10px;
+}
+
+.create {
+  --spacing: 0.8rem;
+  --size: calc(var(--create-space) - var(--spacing) - var(--spacing));
+  --shadow: 0px 4px 8px -4px black;
+  --shadow-inset: 0 0 3px -1px inset var(--foreground);
+
+  position: fixed;
+  bottom: var(--spacing);
+  right: var(--spacing);
+  width: var(--size);
+  height: var(--size);
+  border-radius: var(--size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--lvl2);
+  box-shadow: var(--shadow), var(--shadow-inset);
+}
+
+.create i {
+  font-size: calc(var(--size) - 0.6rem);
+  padding: 0;
 }
 
 /* MENU */
