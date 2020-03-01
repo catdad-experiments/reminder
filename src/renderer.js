@@ -1,14 +1,35 @@
+const notify = async (title, opts) => {
+  const permission = await Notification.requestPermission();
+
+  if (permission !== 'granted') {
+    return;
+  }
+
+  const registration = await navigator.serviceWorker.ready;
+
+  return registration.showNotification(title, opts);
+};
+
 export default ({ events, db, dom }) => {
   const elem = document.querySelector('#main');
+  let FOCUS_ID;
 
-  const renderFile = (card, { filebuffer, filename, filetype }) => {
+  const renderFile = (card, { filebuffer, filename, filetype, dateTime }) => {
     dom.children(
       card,
+      dom.img(new Blob([filebuffer])),
       dom.children(
-        dom.div('title'),
+        dom.div('text'),
         dom.text(`${filename} (${filetype})`)
       ),
-      dom.img(new Blob([filebuffer]))
+      dom.children(dom.div('buttons'), dom.click(dom.icon('notifications_active'), async () => {
+        const image = URL.createObjectURL(new Blob([filebuffer]));
+        await notify(filename, {
+          image,
+          timestamp: dateTime
+        });
+        URL.revokeObjectURL(image);
+      }))
     );
   };
 
@@ -48,36 +69,56 @@ export default ({ events, db, dom }) => {
     );
   };
 
-  const renderPlain = (card, { title, text, url }) => {
+  const renderPlain = (card, { id, title, text, url, dateTime }) => {
     dom.children(
       card,
-      dom.children(dom.div('title'), renderField(title)),
-      dom.children(dom.div(), renderField(text)),
-      dom.children(dom.div(), renderField(url)),
+      title ? dom.children(dom.div('title'), renderField(title)) : dom.nill(),
+      text ? dom.children(dom.div('text'), renderField(text)) : dom.nill(),
+      url ? dom.children(dom.div('text'), renderField(url)) : dom.nill(),
+      dom.children(dom.div('buttons'), dom.click(dom.icon('notifications_active'), async () => {
+        await notify(title, {
+          body: `${text}`,
+          tag: `${id}`,
+          timestamp: dateTime
+        });
+      }))
     );
   };
 
+  const getCards = () => [].slice.call(document.querySelectorAll('.card'))
+    .map(card => {
+      return {
+        card, id: Number(card.getAttribute('data-id'))
+      };
+    });
+
+  const applyCardFocus = () => {
+    getCards().forEach(({ card, id }) => {
+      if (id !== FOCUS_ID) {
+        return void card.classList.remove('focused');
+      }
+
+      card.classList.add('focused');
+      card.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    });
+  };
+
   const onRender = async () => {
-    const cards = [].slice.call(document.querySelectorAll('.card'))
-      .map(card => {
-        return {
-          card, id: Number(card.getAttribute('data-id'))
-        };
-      });
+    const cards = getCards();
 
     let currentCard;
 
     await db.each(null, record => {
-      const card = dom.props(dom.div('card'), {
-        'data-id': record.id
-      });
-
       const idx = cards.findIndex(c => c.id === record.id);
 
       if (idx !== -1) {
         currentCard = cards[idx];
         return;
       }
+
+      const card = dom.props(dom.div('card'), {
+        'data-id': record.id
+      });
 
       if (record.filebuffer) {
         renderFile(card, record);
@@ -91,11 +132,20 @@ export default ({ events, db, dom }) => {
         elem.insertBefore(card, elem.firstChild);
       }
     });
+
+    applyCardFocus();
+  };
+
+  const onRenderFocus = ({ id }) => {
+    FOCUS_ID = id;
+    applyCardFocus();
   };
 
   events.on('render', onRender);
+  events.on('render-focus', onRenderFocus);
 
   return () => {
-    events.on('render', onRender);
+    events.off('render', onRender);
+    events.off('render-focus', onRenderFocus);
   };
 };

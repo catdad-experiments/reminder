@@ -62,3 +62,5 @@ export const img = (srcOrBlob) => Object.assign(elem('img'), {
   },
   src: (srcOrBlob instanceof Blob) ? URL.createObjectURL(srcOrBlob) : srcOrBlob
 });
+
+export const icon = (name) => classname(children(elem('i'), text(name)), 'material-icons');

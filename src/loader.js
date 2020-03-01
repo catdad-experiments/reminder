@@ -45,6 +45,12 @@ if ('serviceWorker' in navigator) {
     if (data.action === 'receive-share') {
       const { title, text, url, file } = data;
       events.emit('receive-share', { title, text, url, file });
+      return;
+    }
+
+    if (data.action === 'notification-click') {
+      events.emit('render-focus', { id: data.id });
+      return;
     }
 
     console.log('worker message', ev.data);
