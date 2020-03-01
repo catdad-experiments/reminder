@@ -32,9 +32,10 @@ export default ({ events, db, dom }) => {
     const BODY = dom.children(
       dom.div(),
       dom.img(file),
-      dom.children(dom.div(), dom.text(`file name: ${file.name}`)),
-      dom.children(dom.div(), dom.text(`file type: ${file.type}`)),
-      dom.children(dom.div(), dom.text(`file size: ${file.size}`))
+      dom.children(dom.div('text'), dom.text(`file name: ${file.name}`)),
+      dom.children(dom.div('text'), dom.text(`file type: ${file.type}`)),
+      dom.children(dom.div('text'), dom.text(`file size: ${file.size}`)),
+      dom.children(dom.div('text'), dom.text(''))
     );
     const serializer = () => ({ file });
 
