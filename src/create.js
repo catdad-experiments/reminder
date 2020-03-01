@@ -6,9 +6,9 @@ export default ({ events, dom }) => {
 
   const getFile = () => {
     return new Promise(resolve => {
-      const input = dom.classname(
-        dom.props(dom.elem('input'), { type: 'file' }),
-        'invisible'
+      const input = dom.props(
+        dom.classname(dom.elem('input'), 'invisible'),
+        { type: 'file' }
       );
 
       document.body.appendChild(input);
