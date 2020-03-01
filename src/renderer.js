@@ -20,7 +20,11 @@ export default ({ events, db, dom }) => {
   const elem = document.querySelector('#main');
   let FOCUS_ID;
 
-  const renderFile = (card, { id, filebuffer, filename, filetype, dateTime }) => {
+  const renderDate = remindAt => remindAt ?
+    dom.classname(dom.span(dateString(new Date(remindAt))), 'date') :
+    dom.nill();
+
+  const renderFile = (card, { id, filebuffer, filename, filetype, remindAt }) => {
     dom.children(
       card,
       dom.img(new Blob([filebuffer])),
@@ -28,15 +32,19 @@ export default ({ events, db, dom }) => {
         dom.div('text'),
         dom.text(`${filename} (${filetype})`)
       ),
-      dom.children(dom.div('buttons'), dom.click(dom.icon('notifications_active'), async () => {
-        const image = URL.createObjectURL(new Blob([filebuffer]));
-        await notify(filename, {
-          image,
-          tag: `${id}`,
-          timestamp: dateTime
-        });
-        URL.revokeObjectURL(image);
-      }))
+      dom.children(
+        dom.div('buttons'),
+        renderDate(remindAt),
+        dom.click(dom.icon('notifications_active'), async () => {
+          const image = URL.createObjectURL(new Blob([filebuffer]));
+          await notify(filename, {
+            image,
+            tag: `${id}`,
+            timestamp: remindAt
+          });
+          URL.revokeObjectURL(image);
+        })
+      )
     );
   };
 
@@ -84,7 +92,7 @@ export default ({ events, db, dom }) => {
       url ? dom.children(dom.div('text'), renderField(url)) : dom.nill(),
       dom.children(
         dom.div('buttons'),
-        remindAt ? dom.classname(dom.span(dateString(new Date(remindAt))), 'date') : dom.nill(),
+        renderDate(remindAt),
         dom.click(dom.icon('notifications_active'), async (e) => {
           e.stopPropagation();
 
