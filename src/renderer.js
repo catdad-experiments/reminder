@@ -7,7 +7,7 @@ const notify = async (title, opts) => {
 
   const registration = await navigator.serviceWorker.ready;
 
-  return registration.showNotification(title, opts);
+  return registration.showNotification(title || 'Reminder', opts);
 };
 
 const dateString = date => {
@@ -97,7 +97,7 @@ export default ({ events, db, dom }) => {
           e.stopPropagation();
 
           await notify(title, {
-            body: `${text}`,
+            body: text ? `${text}` : undefined,
             tag: `${id}`,
             timestamp: remindAt
           });
