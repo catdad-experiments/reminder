@@ -193,6 +193,9 @@ i.material-icons {
   padding-right: var(--pad-size);
   padding-top: var(--pad-size);
 }
+.card .edit {
+  padding-bottom: var(--pad-size);
+}
 
 .card p {
   margin: 0;
@@ -225,6 +228,9 @@ i.material-icons {
   position: absolute;
   top: 0;
   left: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
   user-select: none;
   pointer-events: none;
 }
