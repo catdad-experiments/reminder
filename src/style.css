@@ -215,7 +215,14 @@ i.material-icons {
   padding: var(--pad-size);
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   cursor: default;
+}
+
+.card .date {
+  opacity: 0.5;
+  font-size: 0.8rem;
+  font-style: italic;
 }
 
 .card .edit {

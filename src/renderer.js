@@ -10,6 +10,12 @@ const notify = async (title, opts) => {
   return registration.showNotification(title, opts);
 };
 
+const dateString = date => {
+  const day = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()];
+  const hour = `${date.getHours() % 12 || 12} ${date.getHours() < 12 ? 'am' : 'pm'}`;
+  return `${day}, ${date.toLocaleDateString()}, ${hour}`;
+};
+
 export default ({ events, db, dom }) => {
   const elem = document.querySelector('#main');
   let FOCUS_ID;
@@ -77,6 +83,16 @@ export default ({ events, db, dom }) => {
       url ? dom.children(dom.div('text'), renderField(url)) : dom.nill(),
       dom.children(
         dom.div('buttons'),
+        remindAt ? dom.classname(dom.span(dateString(new Date(remindAt))), 'date') : dom.nill(),
+        dom.click(dom.icon('notifications_active'), async (e) => {
+          e.stopPropagation();
+
+          await notify(title, {
+            body: `${text}`,
+            tag: `${id}`,
+            timestamp: remindAt
+          });
+        }),
         navigator.share ? dom.click(dom.icon('share'), async (e) => {
           e.stopPropagation();
 
@@ -91,16 +107,7 @@ export default ({ events, db, dom }) => {
             // eslint-disable-next-line no-console
             console.error('share error:', e);
           }
-        }) : dom.nill(),
-        dom.click(dom.icon('notifications_active'), async (e) => {
-          e.stopPropagation();
-
-          await notify(title, {
-            body: `${text}`,
-            tag: `${id}`,
-            timestamp: remindAt
-          });
-        })
+        }) : dom.nill()
       )
     );
   };
