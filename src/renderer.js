@@ -154,6 +154,8 @@ export default ({ events, db, dom }) => {
         renderPlain(card, record);
       }
 
+      dom.children(card, dom.div('focus-inset'));
+
       if (currentCard) {
         elem.insertBefore(card, currentCard.card);
       } else {
