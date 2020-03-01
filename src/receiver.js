@@ -13,19 +13,14 @@ export default ({ events, db, dom }) => {
   };
 
   const saveFileShare = async ({ file, createdAt, remindAt }) => {
-    console.log(file.name);
-    console.log(file.type);
-
     const { name: filename, type: filetype } = file;
     const filebuffer = await arrayBuffer(file);
 
-    const result = await db.save({ filename, filetype, filebuffer, createdAt, remindAt });
-    console.log(result);
+    await db.save({ filename, filetype, filebuffer, createdAt, remindAt });
   };
 
   const savePlainShare = async ({ title, text, url, createdAt, remindAt }) => {
-    const result = await db.save({ title, text, url, createdAt, remindAt });
-    console.log(result);
+    await db.save({ title, text, url, createdAt, remindAt });
   };
 
   const fileSplash = ({ file }) => {
