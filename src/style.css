@@ -114,6 +114,11 @@ a {
   padding-bottom: var(--spacing)
 }
 
+i.material-icons {
+  user-select: none;
+  padding: 0 0 0 10px;
+}
+
 /* MENU */
 
 .menu {

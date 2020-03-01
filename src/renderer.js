@@ -75,13 +75,33 @@ export default ({ events, db, dom }) => {
       title ? dom.children(dom.div('title'), renderField(title)) : dom.nill(),
       text ? dom.children(dom.div('text'), renderField(text)) : dom.nill(),
       url ? dom.children(dom.div('text'), renderField(url)) : dom.nill(),
-      dom.children(dom.div('buttons'), dom.click(dom.icon('notifications_active'), async () => {
-        await notify(title, {
-          body: `${text}`,
-          tag: `${id}`,
-          timestamp: dateTime
-        });
-      }))
+      dom.children(
+        dom.div('buttons'),
+        navigator.share ? dom.click(dom.icon('share'), async (e) => {
+          e.stopPropagation();
+
+          const data = {};
+          title && (data.title = title);
+          text && (data.text = text);
+          url && (data.url = url);
+
+          try {
+            await navigator.share(data);
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('share error:', e);
+          }
+        }) : dom.nill(),
+        dom.click(dom.icon('notifications_active'), async (e) => {
+          e.stopPropagation();
+
+          await notify(title, {
+            body: `${text}`,
+            tag: `${id}`,
+            timestamp: dateTime
+          });
+        })
+      )
     );
   };
 
