@@ -48,9 +48,9 @@ export default ({ events, db, dom }) => {
   );
 
   const plainSplash = ({ title, text, url }) => {
-    const TITLE = field(title || '', 'Title...', ['title', 'edit']);
-    const TEXT = field(text || '', 'Text...', ['text', 'edit']);
-    const URL = field(url || '', 'URL...', ['text', 'edit']);
+    const TITLE = field(title || '', 'Title', ['title', 'edit']);
+    const TEXT = field(text || '', 'Text', ['text', 'edit']);
+    const URL = typeof url === 'string' ? field(url, 'URL', ['text', 'edit']) : null;
 
     const serializer = () => {
       return {
@@ -60,7 +60,7 @@ export default ({ events, db, dom }) => {
       };
     };
 
-    return [serializer, TITLE, TEXT, URL];
+    return [serializer, TITLE, TEXT, URL].filter(i => !!i);
   };
 
   const reminders = () => {
