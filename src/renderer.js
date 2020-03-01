@@ -20,7 +20,7 @@ export default ({ events, db, dom }) => {
   const elem = document.querySelector('#main');
   let FOCUS_ID;
 
-  const renderFile = (card, { filebuffer, filename, filetype, dateTime }) => {
+  const renderFile = (card, { id, filebuffer, filename, filetype, dateTime }) => {
     dom.children(
       card,
       dom.img(new Blob([filebuffer])),
@@ -32,6 +32,7 @@ export default ({ events, db, dom }) => {
         const image = URL.createObjectURL(new Blob([filebuffer]));
         await notify(filename, {
           image,
+          tag: `${id}`,
           timestamp: dateTime
         });
         URL.revokeObjectURL(image);
