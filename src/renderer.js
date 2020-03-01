@@ -7,7 +7,11 @@ const notify = async (title, opts) => {
 
   const registration = await navigator.serviceWorker.ready;
 
-  return registration.showNotification(title || 'Reminder', opts);
+  const data = Object.assign({
+    icon: 'assets/icon-512.png'
+  }, opts);
+
+  return registration.showNotification(title || 'Reminder', data);
 };
 
 const dateString = date => {
