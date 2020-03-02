@@ -1,5 +1,7 @@
 const OPEN = 'open';
 
+const shouldHide = () => window.innerHeight < document.body.scrollHeight;
+
 export default ({ events, dom }) => {
   const menu = document.querySelector('#floating-menu');
   const trigger = document.querySelector('#create');
@@ -69,12 +71,20 @@ export default ({ events, dom }) => {
       timer = null;
     }
     
+    if (!shouldHide()) {
+      return;
+    }
+    
     timer = setTimeout(() => {
       menu.classList.remove(OPEN);
       trigger.classList.remove(OPEN);
     }, 1000 * 2);
   };
   
+  const onRender = () => {
+    trigger.classList.add(OPEN);
+    autoClose();
+  };
   const onScroll = () => {
     trigger.classList.add(OPEN);
     autoClose();
@@ -87,17 +97,23 @@ export default ({ events, dom }) => {
   trigger.classList.add(OPEN);
   
   timer = setTimeout(() => {
+    if (!shouldHide()) {
+      return;
+    }
+
     trigger.classList.remove(OPEN);
   }, 1000 * 5);
   
   window.addEventListener('scroll', onScroll);
+  events.on('render-complete', onRender);
 
   return () => {
     trigger.removeEventListener('click', onCreate);
     image.removeEventListener('click', onImage);
     note.removeEventListener('click', onNote);
-
     window.removeEventListener('scroll', onScroll);
+
+    events.off('render-complete', onRender);
     
     if (timer) {
       clearTimeout(timer);

@@ -29,6 +29,12 @@ export default ({ events, db, dom }) => {
   const elem = document.querySelector('#main');
   let FOCUS_ID;
 
+  const deleteCard = async (card, id) => {
+    card.remove();
+    noErr(db.remove({ id }));
+    events.emit('render-complete');
+  };
+  
   const renderDate = remindAt => remindAt ?
     dom.classname(dom.span(dateString(new Date(remindAt))), 'date') :
     dom.nill();
@@ -53,9 +59,8 @@ export default ({ events, db, dom }) => {
           });
           URL.revokeObjectURL(image);
         }),
-        dom.click(dom.icon('delete'), async () => {
-          card.remove();
-          await db.remove({ id });
+        dom.click(dom.icon('delete'), () => {
+          deleteCard(card, id);
         })
       )
     );
@@ -126,8 +131,7 @@ export default ({ events, db, dom }) => {
           await noErr(navigator.share(data));
         }) : dom.nill(),
         dom.click(dom.icon('delete'), () => {
-          card.remove();
-          noErr(db.remove({ id }));
+          deleteCard(card, id);
         })
       )
     );
@@ -184,6 +188,8 @@ export default ({ events, db, dom }) => {
     });
 
     applyCardFocus();
+    
+    events.emit('render-complete');
   };
 
   const onRenderFocus = ({ id }) => {
