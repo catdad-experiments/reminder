@@ -48,20 +48,35 @@ export default ({ events, dom }) => {
   };
 
   const onCreate = () => {
-    menu.classList.toggle(OPEN);
+    trigger.classList.add(OPEN);
+    
+    if (menu.classList.contains(OPEN)) {
+      menu.classList.remove(OPEN);
+      autoClose();
+    } else {
+      menu.classList.add(OPEN);
+      
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    }
   };
   
-  const onScroll = () => {
+  const autoClose = () => {
     if (timer) {
       clearTimeout(timer);
       timer = null;
     }
     
-    trigger.classList.add(OPEN);
-    
     timer = setTimeout(() => {
       trigger.classList.remove(OPEN);
     }, 1000 * 2);
+  };
+  
+  const onScroll = () => {
+    trigger.classList.add(OPEN);
+    autoClose();
   };
 
   trigger.addEventListener('click', onCreate);
