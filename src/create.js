@@ -70,6 +70,7 @@ export default ({ events, dom }) => {
     }
     
     timer = setTimeout(() => {
+      menu.classList.remove(OPEN);
       trigger.classList.remove(OPEN);
     }, 1000 * 2);
   };
