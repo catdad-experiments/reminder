@@ -140,6 +140,11 @@ i.material-icons {
   justify-content: center;
   background: var(--fill);
   box-shadow: var(--shadow);
+  transform: translateX(calc(var(--spacing) + 100%));
+  transition: 200ms;
+}
+.create.open {
+  transform: translateX(0);
 }
 
 .create i {
