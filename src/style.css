@@ -122,7 +122,7 @@ a {
   min-height: 100vh;
   align-items: center;
   justify-content: center;
-  padding-bottom: calc(var(--create-space));
+  padding-bottom: calc(var(--spacing));
 }
 
 i.material-icons {
@@ -135,6 +135,7 @@ i.material-icons {
   --spacing: 0.8rem;
   --size: calc(var(--create-space) - var(--spacing) - var(--spacing));
   --shadow: 0px 4px 8px -4px black, 0 0 3px -1px inset var(--foreground);
+  --timing: 500ms;
 }
 
 .create {
@@ -150,7 +151,7 @@ i.material-icons {
   background: var(--fill);
   box-shadow: var(--shadow);
   transform: translateX(calc(var(--spacing) + 100%));
-  transition: 200ms;
+  transition: var(--timing);
 }
 .create.open {
   transform: translateX(0);
@@ -168,7 +169,7 @@ i.material-icons {
   display: flex;
   flex-direction: column;
   transform: translateX(calc(var(--spacing) + 100%));
-  transition: 200ms;
+  transition: var(--timing);
 }
 .floating-menu.open {
   transform: translateX(0);
