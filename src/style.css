@@ -99,6 +99,15 @@ html, body {
   opacity: 0;
 }
 
+.stealthy {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
 a {
   color: #6daddd;
 }

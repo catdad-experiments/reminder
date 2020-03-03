@@ -9,25 +9,38 @@ export default ({ events, dom }) => {
   const note = document.querySelector('#create-note');
   let timer;
 
-  const getFile = () => {
+  const getFile = ((input) => () => {
+    if (input && input.resolve) {
+      input.resolve();
+    }
+    
+    if (input && input.remove) {
+      input.remove();
+    }
+    
     return new Promise(resolve => {
-      const input = dom.props(
-        dom.classname(dom.elem('input'), 'invisible'),
-        { type: 'file' }
+      input = Object.assign(
+        dom.classname(dom.elem('input'), 'stealthy'),
+        {
+          type: 'file',
+          resolve: () => resolve()
+        }
       );
-
+      
       document.body.appendChild(input);
 
       input.onchange = (ev) => {
         const file = ev.target.files[0];
         input.remove();
         
+        input = null;
+        
         resolve(file || null);
       };
-      
+
       input.click();
     });
-  };
+  })(null);
   
   const onImage = () => {
     menu.classList.remove(OPEN);
