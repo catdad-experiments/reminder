@@ -34,7 +34,7 @@ export default ({ events, db, dom }) => {
     noErr(db.remove({ id }));
     events.emit('render-complete');
   };
-  
+
   const renderDate = remindAt => remindAt ?
     dom.classname(dom.span(dateString(new Date(remindAt))), 'date') :
     dom.nill();
@@ -188,7 +188,7 @@ export default ({ events, db, dom }) => {
     });
 
     applyCardFocus();
-    
+
     events.emit('render-complete');
   };
 

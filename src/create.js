@@ -13,11 +13,11 @@ export default ({ events, dom }) => {
     if (input && input.resolve) {
       input.resolve();
     }
-    
+
     if (input && input.remove) {
       input.remove();
     }
-    
+
     return new Promise(resolve => {
       input = Object.assign(
         dom.classname(dom.elem('input'), 'stealthy'),
@@ -40,19 +40,19 @@ export default ({ events, dom }) => {
       input.click();
     });
   })(null);
-  
+
   const onImage = () => {
     menu.classList.remove(OPEN);
-    
+
     getFile().then(file => {
       if (!file) {
         return;
       }
-      
+
       events.emit('receive-share', { file });
     });
   };
-  
+
   const onNote = () => {
     menu.classList.remove(OPEN);
     events.emit('receive-share', {
@@ -63,36 +63,36 @@ export default ({ events, dom }) => {
 
   const onCreate = () => {
     trigger.classList.add(OPEN);
-    
+
     if (menu.classList.contains(OPEN)) {
       menu.classList.remove(OPEN);
       autoClose();
     } else {
       menu.classList.add(OPEN);
-      
+
       if (timer) {
         clearTimeout(timer);
         timer = null;
       }
     }
   };
-  
+
   const autoClose = () => {
     if (timer) {
       clearTimeout(timer);
       timer = null;
     }
-    
+
     if (!shouldHide()) {
       return;
     }
-    
+
     timer = setTimeout(() => {
       menu.classList.remove(OPEN);
       trigger.classList.remove(OPEN);
     }, 1000 * 2);
   };
-  
+
   const onRender = () => {
     trigger.classList.add(OPEN);
     autoClose();
@@ -105,9 +105,9 @@ export default ({ events, dom }) => {
   trigger.addEventListener('click', onCreate);
   image.addEventListener('click', onImage);
   note.addEventListener('click', onNote);
-  
+
   trigger.classList.add(OPEN);
-  
+
   timer = setTimeout(() => {
     if (!shouldHide()) {
       return;
@@ -115,7 +115,7 @@ export default ({ events, dom }) => {
 
     trigger.classList.remove(OPEN);
   }, 1000 * 5);
-  
+
   window.addEventListener('scroll', onScroll);
   events.on('render-complete', onRender);
 
@@ -126,7 +126,7 @@ export default ({ events, dom }) => {
     window.removeEventListener('scroll', onScroll);
 
     events.off('render-complete', onRender);
-    
+
     if (timer) {
       clearTimeout(timer);
       timer = null;
