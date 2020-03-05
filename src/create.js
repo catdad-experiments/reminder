@@ -23,20 +23,19 @@ export default ({ events, dom }) => {
         dom.classname(dom.elem('input'), 'stealthy'),
         {
           type: 'file',
-          resolve: () => resolve()
+          resolve: () => resolve(),
+          onchange: (ev) => {
+            const file = ev.target.files[0];
+            input.remove();
+
+            input = null;
+
+            resolve(file || null);
+          }
         }
       );
-      
-      document.body.appendChild(input);
 
-      input.onchange = (ev) => {
-        const file = ev.target.files[0];
-        input.remove();
-        
-        input = null;
-        
-        resolve(file || null);
-      };
+      document.body.appendChild(input);
 
       input.click();
     });
