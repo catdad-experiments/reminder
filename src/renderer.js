@@ -1,19 +1,3 @@
-const notify = async (title, opts) => {
-  const permission = await Notification.requestPermission();
-
-  if (permission !== 'granted') {
-    return;
-  }
-
-  const registration = await navigator.serviceWorker.ready;
-
-  const data = Object.assign({
-    icon: 'assets/icon-512.png'
-  }, opts);
-
-  return registration.showNotification(title || 'Reminder', data);
-};
-
 const noErr = prom => prom.catch(e => {
   // eslint-disable-next-line no-console
   console.error('Hanlded Error:', e);
@@ -25,7 +9,7 @@ const dateString = date => {
   return `${day}, ${date.toLocaleDateString()}, ${hour}`;
 };
 
-export default ({ events, db, dom }) => {
+export default ({ events, db, dom, notify }) => {
   const elem = document.querySelector('#main');
   let FOCUS_ID;
 

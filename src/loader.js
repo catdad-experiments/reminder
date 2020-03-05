@@ -147,6 +147,7 @@ export default () => {
     load('./event-emitter.js'),
     load('./db.js'),
     load('./dom.js'),
+    load('./notify.js'),
     load('./receiver.js'),
     load('./renderer.js'),
     load('./create.js'),
@@ -154,11 +155,12 @@ export default () => {
     eventEmitter,
     DB,
     dom,
+    notify,
     ...modules
   ]) => {
     // set up a global event emitter
     const db = await DB();
-    const context = { events: eventEmitter(), load, dom, db };
+    const context = { events: eventEmitter(), load, dom, db, notify };
     const destroys = await map(modules, mod => mod(context));
 
     context.events.on('error', function (err) {
