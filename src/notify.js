@@ -10,14 +10,22 @@ const supportsTriggers = typeof Notification !== typeof undefined &&
 //    showTrigger: new TimestampTrigger(timestamp + 30 * 1000)
 //  });
 
-const notify = async (title, opts, showAsTrigger = false) => {
+const getRegistration = async () => {
   const permission = await Notification.requestPermission();
 
   if (permission !== 'granted') {
     return;
   }
 
-  const registration = await navigator.serviceWorker.ready;
+  return await navigator.serviceWorker.ready;
+};
+
+const notify = async (title, opts, showAsTrigger = false) => {
+  const registration = await getRegistration();
+
+  if (!registration) {
+    return;
+  }
 
   const data = Object.assign({
     icon: 'assets/icon-512.png'
@@ -32,4 +40,28 @@ const notify = async (title, opts, showAsTrigger = false) => {
   return registration.showNotification(title || 'Reminder', data);
 };
 
-export default notify;
+const notifyCard = async ({
+  id, remindAt,
+  // note properties
+  title, text, /* url, */
+  // image properties
+  filebuffer, filename
+}, showAsTrigger = false) => {
+  if (filebuffer) {
+    const image = URL.createObjectURL(new Blob([filebuffer]));
+    await notify(filename, {
+      image,
+      tag: `${id}`,
+      timestamp: remindAt
+    }, showAsTrigger);
+    URL.revokeObjectURL(image);
+  } else {
+    await notify(title, {
+      body: text ? `${text}` : undefined,
+      tag: `${id}`,
+      timestamp: remindAt
+    }, showAsTrigger);
+  }
+};
+
+export default notifyCard;

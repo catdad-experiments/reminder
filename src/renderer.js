@@ -34,14 +34,9 @@ export default ({ events, db, dom, notify }) => {
       dom.children(
         dom.div('buttons'),
         renderDate(remindAt),
-        dom.click(dom.icon('notifications_active'), async () => {
-          const image = URL.createObjectURL(new Blob([filebuffer]));
-          await notify(filename, {
-            image,
-            tag: `${id}`,
-            timestamp: remindAt
-          });
-          URL.revokeObjectURL(image);
+        dom.click(dom.icon('notifications_active'), async (e) => {
+          e.stopPropagation();
+          await notify({ id, filebuffer, filename, remindAt });
         }),
         dom.click(dom.icon('delete'), () => {
           deleteCard(card, id);
@@ -98,11 +93,7 @@ export default ({ events, db, dom, notify }) => {
         dom.click(dom.icon('notifications_active'), async (e) => {
           e.stopPropagation();
 
-          await notify(title, {
-            body: text ? `${text}` : undefined,
-            tag: `${id}`,
-            timestamp: remindAt
-          });
+          await notify({ id, title, text, url, remindAt });
         }),
         navigator.share ? dom.click(dom.icon('share'), async (e) => {
           e.stopPropagation();
