@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-export default ({ events, db, dom }) => {
+export default ({ events, db, dom, notify }) => {
   const arrayBuffer = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -16,11 +16,11 @@ export default ({ events, db, dom }) => {
     const { name: filename, type: filetype } = file;
     const filebuffer = await arrayBuffer(file);
 
-    await db.save({ filename, filetype, filebuffer, createdAt, remindAt });
+    return await db.save({ filename, filetype, filebuffer, createdAt, remindAt });
   };
 
   const savePlainShare = async ({ title, text, url, createdAt, remindAt }) => {
-    await db.save({ title, text, url, createdAt, remindAt });
+    return await db.save({ title, text, url, createdAt, remindAt });
   };
 
   const fileSplash = ({ file }) => {
@@ -112,12 +112,17 @@ export default ({ events, db, dom }) => {
 
         const save = file ? saveFileShare(data) : savePlainShare(data);
 
-        save.then(() => {
+        save.then(id => {
           events.emit('render');
+          return id;
         }).catch(e => {
           console.error(e);
-        }).then(() => {
+        }).then(id => {
           elem.remove();
+
+          data.id = id;
+
+          return notify(data, true);
         });
       })
     );
