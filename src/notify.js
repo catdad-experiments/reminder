@@ -4,12 +4,6 @@ const supportsTriggers = typeof Notification !== typeof undefined &&
   typeof TimestampTrigger !== typeof undefined &&
   'showTrigger' in Notification.prototype;
 
-//  registration.showNotification(title, {
-//    tag: tag,
-//    body: "This notification was scheduled 30 seconds ago",
-//    showTrigger: new TimestampTrigger(timestamp + 30 * 1000)
-//  });
-
 const getRegistration = async () => {
   const permission = await Notification.requestPermission();
 
