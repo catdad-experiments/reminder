@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import toast from './toast.js';
+import validate from './init-validate.js';
 
 const TOAST = '🍞';
 
@@ -18,6 +19,19 @@ let events = (function () {
     }
   };
 }());
+
+function onError(err, duration = 8 * 1000) {
+  // eslint-disable-next-line no-console
+  console.error(TOAST, err);
+
+  const html = `${err.prepared ? '' : '<p>An error occured:</p>'}<p>${
+    err.message.split('\n').join('<br/>')
+  }</p>`;
+
+  toast.error(html, {
+    duration
+  });
+}
 
 window.addEventListener('beforeinstallprompt', () => {
   console.log('👀 we can install the app now');
@@ -60,73 +74,12 @@ if ('serviceWorker' in navigator) {
 }
 
 export default () => {
-  function onMissingFeatures(missing) {
-    const text = `<p>It seems your browser is not supported. The following features are missing:</p>
-                  <p>${missing.join(', ')}</p>`;
-
-    console.log(TOAST, text);
-    toast.error(text, {
-      duration: -1 // forever
-    });
+  try {
+    validate();
+  } catch (e) {
+    onError(e, -1 /* duration: forever */);
+    return;
   }
-
-  function onError(err, duration = 8 * 1000) {
-    // eslint-disable-next-line no-console
-    console.error(TOAST, err);
-    toast.error(`<p>An error occured:</p><p>${err.toString().split('\n').join('<br/>')}</p>`, {
-      duration
-    });
-  }
-
-  // detect missing features in the browser
-  const missingFeatures = [
-    'Promise',
-    'Map',
-    'localStorage',
-    ['dynamic import', () => {
-      try {
-        new Function('import("").catch(() => {})')();
-        return true;
-      } catch (err) {
-        return false;
-      }
-    }],
-    ['async/await', () => {
-      try {
-        new Function('async () => {}');
-        return true;
-      } catch (err) {
-        return false;
-      }
-    }],
-    ['IndexedDB', () => {
-      return !!(
-        window.indexedDB ||
-        window.mozIndexedDB ||
-        window.webkitIndexedDB ||
-        window.msIndexedDB
-      );
-    }]
-  ].filter(function (name) {
-    if (Array.isArray(name)) {
-      const [, test] = name;
-
-      return !test();
-    }
-
-    return !name.split('.').reduce(function (obj, path) {
-      return (obj || {})[path];
-    }, window);
-  }).map(v => Array.isArray(v) ? v[0] : v);
-
-  if (missingFeatures.length) {
-    return onMissingFeatures(missingFeatures);
-  }
-
-  // ------------------------------------------------
-  // we've validated modules... we can use fancy
-  // things now
-  // ------------------------------------------------
 
   function load(name) {
     // get around eslint@5 not supporting dynamic import
