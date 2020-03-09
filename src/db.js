@@ -1,4 +1,4 @@
-/* global Dexie */
+import Dexie from 'https://cdn.jsdelivr.net/npm/dexie@2.0.4/dist/dexie.es.js';
 
 const DB_NAME = 'reminder-v1';
 const TABLE = 'data';
