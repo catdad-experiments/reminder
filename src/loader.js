@@ -24,28 +24,28 @@ function onError(err, duration = 8 * 1000) {
   });
 }
 
+function load(name) {
+  // get around eslint@5 not supporting dynamic import
+  // this is ugly, but I also don't care
+  return (new Function(`return import('${name}')`))().then(m => m.default || m);
+}
+
+async function map(arr, func) {
+  const results = [];
+
+  for (let i = 0; i < arr.length; i++) {
+    results.push(await func(arr[i], i, arr));
+  }
+
+  return results;
+}
+
 export default () => {
   try {
     validate();
-  } catch (e) {
-    onError(e, -1 /* duration: forever */);
+  } catch (err) {
+    onError(err, -1);
     return;
-  }
-
-  function load(name) {
-    // get around eslint@5 not supporting dynamic import
-    // this is ugly, but I also don't care
-    return (new Function(`return import('${name}')`))().then(m => m.default || m);
-  }
-
-  async function map(arr, func) {
-    const results = [];
-
-    for (let i = 0; i < arr.length; i++) {
-      results.push(await func(arr[i], i, arr));
-    }
-
-    return results;
   }
 
   // load all the modules from the server directly
