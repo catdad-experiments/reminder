@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 
-//import toast from './toast.js';
+import toast from './toast.js';
+
+const TOAST = '🍞';
 
 let events = (function () {
   let collection = [];
@@ -62,18 +64,18 @@ export default () => {
     const text = `<p>It seems your browser is not supported. The following features are missing:</p>
                   <p>${missing.join(', ')}</p>`;
 
-    console.log('TOAST', text);
-    //    toast.error(text, {
-    //      duration: -1 // forever
-    //    });
+    console.log(TOAST, text);
+    toast.error(text, {
+      duration: -1 // forever
+    });
   }
 
   function onError(err, duration = 8 * 1000) {
     // eslint-disable-next-line no-console
-    console.error(err, duration);
-    //    toast.error(`<p>An error occured:</p><p>${err.toString().split('\n').join('<br/>')}</p>`, {
-    //      duration
-    //    });
+    console.error(TOAST, err);
+    toast.error(`<p>An error occured:</p><p>${err.toString().split('\n').join('<br/>')}</p>`, {
+      duration
+    });
   }
 
   // detect missing features in the browser
@@ -171,8 +173,8 @@ export default () => {
     });
 
     context.events.on('info', (msg) => {
-      console.log('TOAST', msg);
-      //      toast.info(msg.toString());
+      console.log(TOAST, msg);
+      toast.info(msg.toString());
     });
 
     events.flush(context.events);
