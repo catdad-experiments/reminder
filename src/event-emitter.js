@@ -17,25 +17,22 @@ export default () => {
   }
 
   function removeEvent(name, func) {
-    events[name] = events[name].filter(function (obj) {
-      return obj.func !== func;
-    });
-
+    events[name] = events[name].filter(obj => obj.func !== func);
     return api;
   }
 
-  api.on = function on(name, func) {
+  api.on = (name, func) => {
     return addEvent(name, func, func);
   };
 
-  api.once = function once(name, func) {
-    return addEvent(name, func, function onceWrapper(...args) {
+  api.once = (name, func) => {
+    return addEvent(name, func, (...args) => {
       func(...args);
       removeEvent(name, func);
     });
   };
 
-  api.off = function off(name, func) {
+  api.off = (name, func) => {
     const evName = name.toLowerCase();
 
     if (!events[evName]) {
@@ -45,7 +42,7 @@ export default () => {
     return removeEvent(evName, func);
   };
 
-  api.emit = function emit(name, ...args) {
+  api.emit = (name, ...args) => {
     const evName = name.toLowerCase();
 
     if (paused) {
@@ -57,19 +54,21 @@ export default () => {
       return api;
     }
 
-    events[evName].forEach(function(obj){
-      obj.wrapped(...args);
-    });
+    events[evName].forEach(obj => obj.wrapped(...args));
+
+    return api;
   };
 
   api.pause = () => {
     paused = true;
+    return api;
   };
 
   api.resume = () => {
     paused = false;
     collection.forEach(args => api.emit(...args));
     collection = [];
+    return api;
   };
 
   return api;
