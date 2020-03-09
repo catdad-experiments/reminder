@@ -26,7 +26,8 @@ const notify = async (title, opts, showAsTrigger = false) => {
   }, opts);
 
   if (supportsTriggers && showAsTrigger && data.timestamp) {
-    data.showTrigger = new TimestampTrigger(data.timestamp);
+    data.showTrigger = new TimestampTrigger(Date.now() + (15 * 1000));
+    // data.showTrigger = new TimestampTrigger(data.timestamp);
   } else if (showAsTrigger) {
     return;
   }
