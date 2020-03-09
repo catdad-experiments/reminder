@@ -2,6 +2,7 @@
 
 import toast from './toast.js';
 import validate from './init-validate.js';
+import service from './init-service.js';
 
 const TOAST = '🍞';
 
@@ -20,6 +21,8 @@ let events = (function () {
   };
 }());
 
+service({ events });
+
 function onError(err, duration = 8 * 1000) {
   // eslint-disable-next-line no-console
   console.error(TOAST, err);
@@ -30,46 +33,6 @@ function onError(err, duration = 8 * 1000) {
 
   toast.error(html, {
     duration
-  });
-}
-
-window.addEventListener('beforeinstallprompt', () => {
-  console.log('👀 we can install the app now');
-//  events.emit('can-install', { prompt: ev });
-});
-
-window.addEventListener('appinstalled', () => {
-//  events.emit('info', '🎊 installed 🎊');
-});
-
-if ('serviceWorker' in navigator) {
-  console.log('👍', 'navigator.serviceWorker is supported');
-
-  navigator.serviceWorker.register('./service-worker.js', { scope: './' }).then(() => {
-    console.log('👍', 'worker registered');
-  }).catch(err => {
-    console.warn('👎', 'worker errored', err);
-  });
-
-  navigator.serviceWorker.addEventListener('message', (ev) => {
-    const data = ev.data;
-
-    if (data.action === 'log') {
-      return void console.log('worker:', ...data.args);
-    }
-
-    if (data.action === 'receive-share') {
-      const { title, text, url, file } = data;
-      events.emit('receive-share', { title, text, url, file });
-      return;
-    }
-
-    if (data.action === 'notification-click') {
-      events.emit('render-focus', { id: data.id });
-      return;
-    }
-
-    console.log('worker message', ev.data);
   });
 }
 
