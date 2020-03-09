@@ -1,25 +1,13 @@
 /* eslint-disable no-console */
 
+import eventEmitter from './event-emitter.js';
 import toast from './toast.js';
 import validate from './init-validate.js';
 import service from './init-service.js';
 
 const TOAST = '🍞';
-
-let events = (function () {
-  let collection = [];
-
-  return {
-    emit: (...args) => {
-      collection.push(args);
-    },
-    flush: function (emitter) {
-      collection.forEach((args) => {
-        emitter.emit(...args);
-      });
-    }
-  };
-}());
+const events = eventEmitter();
+events.pause();
 
 service({ events });
 
@@ -62,21 +50,19 @@ export default () => {
 
   // load all the modules from the server directly
   Promise.all([
-    load('./event-emitter.js'),
     load('./db.js'),
     load('./dom.js'),
     load('./receiver.js'),
     load('./renderer.js'),
     load('./create.js'),
   ]).then(async ([
-    eventEmitter,
     DB,
     dom,
     ...modules
   ]) => {
     // set up a global event emitter
     const db = await DB();
-    const context = { events: eventEmitter(), load, dom, db };
+    const context = { events, load, dom, db };
     const destroys = await map(modules, mod => mod(context));
 
     context.events.on('error', function (err) {
@@ -93,9 +79,7 @@ export default () => {
       toast.info(msg.toString());
     });
 
-    events.flush(context.events);
-    events = context.events;
-
+    events.resume();
     events.emit('render');
   }).catch(function catchErr(err) {
     events.emit('error', err);

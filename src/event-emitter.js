@@ -1,6 +1,8 @@
 export default () => {
   const events = {};
   const api = {};
+  let collection = [];
+  let paused = false;
 
   function addEvent(name, func, wrapped) {
     const evName = name.toLowerCase();
@@ -46,6 +48,11 @@ export default () => {
   api.emit = function emit(name, ...args) {
     const evName = name.toLowerCase();
 
+    if (paused) {
+      collection.push([name, ...args]);
+      return api;
+    }
+
     if (!events[evName]) {
       return api;
     }
@@ -53,6 +60,16 @@ export default () => {
     events[evName].forEach(function(obj){
       obj.wrapped(...args);
     });
+  };
+
+  api.pause = () => {
+    paused = true;
+  };
+
+  api.resume = () => {
+    paused = false;
+    collection.forEach(args => api.emit(...args));
+    collection = [];
   };
 
   return api;
