@@ -59,7 +59,7 @@ export default ({ events, db, dom, notify }) => {
     );
   };
 
-  const renderPlain = ({ title, text, url }) => {
+  const renderNote = ({ title, text, url }) => {
     return dom.fragment(
       title ? dom.children(dom.div('title'), renderField(title)) : dom.nill(),
       text ? dom.children(dom.div('text'), renderField(text)) : dom.nill(),
@@ -115,7 +115,7 @@ export default ({ events, db, dom, notify }) => {
 
       dom.children(
         card,
-        isFile ? renderFile(record) : renderPlain(record),
+        isFile ? renderFile(record) : renderNote(record),
         dom.children(
           dom.div('buttons'),
           renderDate(record.remindAt),
