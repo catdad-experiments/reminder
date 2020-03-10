@@ -4,43 +4,33 @@ const supportsTriggers = typeof Notification !== typeof undefined &&
   typeof TimestampTrigger !== typeof undefined &&
   'showTrigger' in Notification.prototype;
 
-const getRegistration = async () => {
+const withRegistration = async (action, withoutRegistration = undefined) => {
   const permission = await Notification.requestPermission();
 
   if (permission !== 'granted') {
-    return;
+    return withoutRegistration;
   }
 
-  return await navigator.serviceWorker.ready;
+  return await action(await navigator.serviceWorker.ready);
 };
 
 const create = async (title, opts, showAsTrigger = false) => {
-  const registration = await getRegistration();
+  return await withRegistration(registration => {
+    const data = Object.assign({
+      icon: 'assets/icon-512.png'
+    }, opts);
 
-  if (!registration) {
-    return;
-  }
+    if (supportsTriggers && showAsTrigger && data.timestamp) {
+      data.showTrigger = new TimestampTrigger(data.timestamp);
+    } else if (showAsTrigger) {
+      return;
+    }
 
-  const data = Object.assign({
-    icon: 'assets/icon-512.png'
-  }, opts);
-
-  if (supportsTriggers && showAsTrigger && data.timestamp) {
-    data.showTrigger = new TimestampTrigger(data.timestamp);
-  } else if (showAsTrigger) {
-    return;
-  }
-
-  return registration.showNotification(title || 'Reminder', data);
+    return registration.showNotification(title || 'Reminder', data);
+  });
 };
 
-const get = async () => {
-  const registration = await getRegistration();
-
-  if (!registration) {
-    return [];
-  }
-
+const get = async () => await withRegistration(async registration => {
   const opts = {};
 
   if (supportsTriggers) {
@@ -54,7 +44,7 @@ const get = async () => {
     delayed: !!n.showTrigger,
     timestamp: n.timestamp
   }));
-};
+}, []);
 
 const notifyCard = async ({
   id, remindAt,
