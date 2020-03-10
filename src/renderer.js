@@ -23,24 +23,12 @@ export default ({ events, db, dom, notify }) => {
     dom.classname(dom.span(dateString(new Date(remindAt))), 'date') :
     dom.nill();
 
-  const renderFile = (card, { id, filebuffer, filename, filetype, remindAt }) => {
-    dom.children(
-      card,
+  const renderFile = ({ filebuffer, filename, filetype }) => {
+    return dom.fragment(
       dom.img(new Blob([filebuffer])),
       dom.children(
         dom.div('text'),
         dom.text(`${filename} (${filetype})`)
-      ),
-      dom.children(
-        dom.div('buttons'),
-        renderDate(remindAt),
-        dom.click(dom.icon('notifications_active'), async (e) => {
-          e.stopPropagation();
-          await notify({ id, filebuffer, filename, remindAt });
-        }),
-        dom.click(dom.icon('delete'), () => {
-          deleteCard(card, id);
-        })
       )
     );
   };
@@ -81,34 +69,11 @@ export default ({ events, db, dom, notify }) => {
     );
   };
 
-  const renderPlain = (card, { id, title, text, url, remindAt }) => {
-    dom.children(
-      card,
+  const renderPlain = ({ title, text, url }) => {
+    return dom.fragment(
       title ? dom.children(dom.div('title'), renderField(title)) : dom.nill(),
       text ? dom.children(dom.div('text'), renderField(text)) : dom.nill(),
       url ? dom.children(dom.div('text'), renderField(url)) : dom.nill(),
-      dom.children(
-        dom.div('buttons'),
-        renderDate(remindAt),
-        dom.click(dom.icon('notifications_active'), async (e) => {
-          e.stopPropagation();
-
-          await notify({ id, title, text, url, remindAt });
-        }),
-        navigator.share ? dom.click(dom.icon('share'), async (e) => {
-          e.stopPropagation();
-
-          const data = {};
-          title && (data.title = title);
-          text && (data.text = text);
-          url && (data.url = url);
-
-          await noErr(navigator.share(data));
-        }) : dom.nill(),
-        dom.click(dom.icon('delete'), () => {
-          deleteCard(card, id);
-        })
-      )
     );
   };
 
@@ -137,6 +102,7 @@ export default ({ events, db, dom, notify }) => {
 
     await db.each(null, record => {
       const idx = cards.findIndex(c => c.id === record.id);
+      const isFile = 'filebuffer' in record;
 
       if (idx !== -1) {
         currentCard = cards[idx];
@@ -147,11 +113,31 @@ export default ({ events, db, dom, notify }) => {
         'data-id': record.id
       });
 
-      if (record.filebuffer) {
-        renderFile(card, record);
-      } else {
-        renderPlain(card, record);
-      }
+      dom.children(
+        card,
+        isFile ? renderFile(record) : renderPlain(record),
+        dom.children(
+          dom.div('buttons'),
+          renderDate(record.remindAt),
+          dom.click(dom.icon('notifications_active'), async (e) => {
+            e.stopPropagation();
+            await notify(record);
+          }),
+          navigator.share && !isFile ? dom.click(dom.icon('share'), async (e) => {
+            e.stopPropagation();
+
+            const data = {};
+            record.title && (data.title = record.title);
+            record.text && (data.text = record.text);
+            record.url && (data.url = record.url);
+
+            await noErr(navigator.share(data));
+          }) : dom.nill(),
+          dom.click(dom.icon('delete'), () => {
+            deleteCard(card, record.id);
+          })
+        )
+      );
 
       dom.children(card, dom.div('focus-inset'));
 
