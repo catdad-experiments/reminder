@@ -34,6 +34,28 @@ const create = async (title, opts, showAsTrigger = false) => {
   return registration.showNotification(title || 'Reminder', data);
 };
 
+const get = async () => {
+  const registration = await getRegistration();
+
+  if (!registration) {
+    return [];
+  }
+
+  const opts = {};
+
+  if (supportsTriggers) {
+    opts.includeTriggered = true;
+  }
+
+  const notifications = await registration.getNotifications(opts);
+
+  return notifications.map(n => ({
+    id: Number(n.tag),
+    delayed: !!n.showTrigger,
+    timestamp: n.timestamp
+  }));
+};
+
 const notifyCard = async ({
   id, remindAt,
   // note properties
@@ -61,3 +83,4 @@ const notifyCard = async ({
 export const show = async record => await notifyCard(record, false);
 export const schedule = async record => supportsTriggers ? await notifyCard(record, true) : undefined;
 export const hasTriggers = supportsTriggers;
+export { get };
