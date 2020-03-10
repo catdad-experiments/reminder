@@ -23,16 +23,6 @@ export default ({ events, db, dom, notify }) => {
     dom.classname(dom.span(dateString(new Date(remindAt))), 'date') :
     dom.nill();
 
-  const renderFile = ({ filebuffer, filename, filetype }) => {
-    return dom.fragment(
-      dom.img(new Blob([filebuffer])),
-      dom.children(
-        dom.div('text'),
-        dom.text(`${filename} (${filetype})`)
-      )
-    );
-  };
-
   const renderField = field => {
     if (!field) {
       return dom.nill();
@@ -74,6 +64,16 @@ export default ({ events, db, dom, notify }) => {
       title ? dom.children(dom.div('title'), renderField(title)) : dom.nill(),
       text ? dom.children(dom.div('text'), renderField(text)) : dom.nill(),
       url ? dom.children(dom.div('text'), renderField(url)) : dom.nill(),
+    );
+  };
+
+  const renderFile = ({ filebuffer, filename, filetype }) => {
+    return dom.fragment(
+      dom.img(new Blob([filebuffer])),
+      dom.children(
+        dom.div('text'),
+        dom.text(`${filename} (${filetype})`)
+      )
     );
   };
 
