@@ -9,7 +9,7 @@ const dateString = date => {
   return `${day}, ${date.toLocaleDateString()}, ${hour}`;
 };
 
-export default ({ events, db, dom, notify }) => {
+export default ({ events, db, dom, notification }) => {
   const elem = document.querySelector('#main');
   let FOCUS_ID;
 
@@ -121,7 +121,7 @@ export default ({ events, db, dom, notify }) => {
           renderDate(record.remindAt),
           dom.click(dom.icon('notifications_active'), async (e) => {
             e.stopPropagation();
-            await notify(record);
+            await notification.show(record);
           }),
           navigator.share && !isFile ? dom.click(dom.icon('share'), async (e) => {
             e.stopPropagation();

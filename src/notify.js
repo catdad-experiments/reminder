@@ -14,7 +14,7 @@ const getRegistration = async () => {
   return await navigator.serviceWorker.ready;
 };
 
-const notify = async (title, opts, showAsTrigger = false) => {
+const create = async (title, opts, showAsTrigger = false) => {
   const registration = await getRegistration();
 
   if (!registration) {
@@ -26,8 +26,7 @@ const notify = async (title, opts, showAsTrigger = false) => {
   }, opts);
 
   if (supportsTriggers && showAsTrigger && data.timestamp) {
-    data.showTrigger = new TimestampTrigger(Date.now() + (15 * 1000));
-    // data.showTrigger = new TimestampTrigger(data.timestamp);
+    data.showTrigger = new TimestampTrigger(data.timestamp);
   } else if (showAsTrigger) {
     return;
   }
@@ -44,14 +43,14 @@ const notifyCard = async ({
 }, showAsTrigger = false) => {
   if (filebuffer) {
     const image = URL.createObjectURL(new Blob([filebuffer]));
-    await notify(filename, {
+    await create(filename, {
       image,
       tag: `${id}`,
       timestamp: remindAt
     }, showAsTrigger);
     URL.revokeObjectURL(image);
   } else {
-    await notify(title, {
+    await create(title, {
       body: text ? `${text}` : undefined,
       tag: `${id}`,
       timestamp: remindAt
@@ -59,4 +58,6 @@ const notifyCard = async ({
   }
 };
 
-export default notifyCard;
+export const show = async record => await notifyCard(record, false);
+export const schedule = async record => supportsTriggers ? await notifyCard(record, true) : undefined;
+export const hasTriggers = supportsTriggers;

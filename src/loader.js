@@ -59,12 +59,12 @@ export default () => {
   ]).then(async ([
     DB,
     dom,
-    notify,
+    notification,
     ...modules
   ]) => {
     // set up a global event emitter
     const db = await DB();
-    const context = { events, load, dom, db, notify };
+    const context = { events, load, dom, db, notification };
     const destroys = await map(modules, mod => mod(context));
 
     context.events.on('error', function (err) {

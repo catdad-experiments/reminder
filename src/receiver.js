@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-export default ({ events, db, dom, notify }) => {
+export default ({ events, db, dom, notification }) => {
   const arrayBuffer = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -122,7 +122,7 @@ export default ({ events, db, dom, notify }) => {
 
           data.id = id;
 
-          return notify(data, true);
+          return notification.schedule(data, true);
         });
       })
     );
