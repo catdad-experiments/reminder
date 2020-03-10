@@ -14,6 +14,8 @@ const withRegistration = async (action, withoutRegistration = undefined) => {
   return await action(await navigator.serviceWorker.ready);
 };
 
+const withTriggers = opts => supportsTriggers ? Object.assign({ includeTriggered: true }, opts) : opts;
+
 const create = async (title, opts, showAsTrigger = false) => {
   return await withRegistration(registration => {
     const data = Object.assign({
@@ -31,20 +33,18 @@ const create = async (title, opts, showAsTrigger = false) => {
 };
 
 const get = async () => await withRegistration(async registration => {
-  const opts = {};
-
-  if (supportsTriggers) {
-    opts.includeTriggered = true;
-  }
-
-  const notifications = await registration.getNotifications(opts);
-
-  return notifications.map(n => ({
+  return (await registration.getNotifications(withTriggers({}))).map(n => ({
     id: Number(n.tag),
     delayed: !!n.showTrigger,
     timestamp: n.timestamp
   }));
 }, []);
+
+const close = async id => await withRegistration(async registration => {
+  for (let n in await registration.getNotifications(withTriggers({ tag: `${id}` }))) {
+    n.close();
+  }
+});
 
 const notifyCard = async ({
   id, remindAt,
@@ -73,4 +73,4 @@ const notifyCard = async ({
 export const show = async record => await notifyCard(record, false);
 export const schedule = async record => supportsTriggers ? await notifyCard(record, true) : undefined;
 export const hasTriggers = supportsTriggers;
-export { get };
+export { get, close };
