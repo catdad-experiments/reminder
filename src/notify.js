@@ -37,7 +37,7 @@ const get = async () => await withRegistration(async registration => {
 }, []);
 
 const close = async id => await withRegistration(async registration => {
-  for (let n in await registration.getNotifications(withTriggers({ tag: `${id}` }))) {
+  for (let n of await registration.getNotifications(withTriggers({ tag: `${id}` }))) {
     n.close();
   }
 });
