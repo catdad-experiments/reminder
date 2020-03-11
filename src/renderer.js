@@ -19,9 +19,10 @@ export default ({ events, db, dom, notification }) => {
     events.emit('render-complete');
   };
 
-  const renderDate = remindAt => remindAt ?
-    dom.classname(dom.span(dateString(new Date(remindAt))), 'date') :
-    dom.nill();
+  const renderDate = remindAt => dom.classname(
+    dom.span(remindAt ? dateString(new Date(remindAt)) : 'Never'),
+    'date'
+  );
 
   const renderField = field => {
     if (!field) {
