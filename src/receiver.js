@@ -119,7 +119,12 @@ export default ({ events, db, dom, notification }) => {
 
           data.id = id;
 
-          return notification.schedule(data, true);
+          if (reminder() < new Date()) {
+            // user wants notification now
+            return notification.show(data);
+          }
+
+          return notification.schedule(data);
         });
       })
     );
