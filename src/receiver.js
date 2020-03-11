@@ -72,10 +72,10 @@ export default ({ events, db, dom, notification }) => {
     let result;
 
     const elems = [
-      [now, 'Now'],
       [tonight, 'Tonight'],
       [tomorrowMorning, 'Tomorrow Morning'],
-      [tomorrowEvening, 'Tomorrow Evening']
+      [tomorrowEvening, 'Tomorrow Evening'],
+      [now, 'Now']
     ].filter(([date]) => date >= now).map(([date, name]) => {
       const elem = dom.button(name, () => {
         deselect();
