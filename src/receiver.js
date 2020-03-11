@@ -71,30 +71,27 @@ export default ({ events, db, dom, notification }) => {
 
     let result;
 
-    const TONIGHT = dom.button('Tonight', () => {
-      deselect();
-      TONIGHT.classList.add('selected');
+    const elems = [
+      [now, 'Now'],
+      [tonight, 'Tonight'],
+      [tomorrowMorning, 'Tomorrow Morning'],
+      [tomorrowEvening, 'Tomorrow Evening']
+    ].map(([date, name], idx) => {
+      const elem = dom.button(name, () => {
+        deselect();
+        elem.classList.add('selected');
 
-      result = tonight;
-    });
-    const MORNING = dom.button('Tomorrow Morning', () => {
-      deselect();
-      MORNING.classList.add('selected');
+        result = date;
+      });
 
-      result = tomorrowMorning;
-    });
-    const EVENING = dom.button('Tomorrow Evening', () => {
-      deselect();
-      EVENING.classList.add('selected');
-
-      result = tomorrowEvening;
+      return elem;
     });
 
-    const deselect = () => void [TONIGHT, MORNING, EVENING].forEach(e => e.classList.remove('selected'));
+    const deselect = () => void elems.forEach(e => e.classList.remove('selected'));
 
-    TONIGHT.click();
+    elems[0].click();
 
-    return [() => result, TONIGHT, MORNING, EVENING];
+    return [() => result, ...elems];
   };
 
   const splash = ({ title, text, url, file }) => {
