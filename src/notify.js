@@ -1,6 +1,6 @@
 /* global TimestampTrigger */
 
-const supportsTriggers = typeof Notification !== typeof undefined &&
+const hasTriggers = typeof Notification !== typeof undefined &&
   typeof TimestampTrigger !== typeof undefined &&
   'showTrigger' in Notification.prototype;
 
@@ -14,7 +14,7 @@ const withRegistration = async (action, withoutRegistration = undefined) => {
   return await action(await navigator.serviceWorker.ready);
 };
 
-const withTriggers = opts => supportsTriggers ? Object.assign({ includeTriggered: true }, opts) : opts;
+const withTriggers = opts => hasTriggers ? Object.assign({ includeTriggered: true }, opts) : opts;
 
 const create = async (title, opts, showAsTrigger = false) => {
   return await withRegistration(registration => {
@@ -22,7 +22,7 @@ const create = async (title, opts, showAsTrigger = false) => {
       icon: 'assets/icon-512.png'
     }, opts);
 
-    if (supportsTriggers && showAsTrigger && data.timestamp) {
+    if (hasTriggers && showAsTrigger && data.timestamp) {
       data.showTrigger = new TimestampTrigger(data.timestamp);
     } else if (showAsTrigger) {
       return;
@@ -71,6 +71,5 @@ const notifyCard = async ({
 };
 
 export const show = async record => await notifyCard(record, false);
-export const schedule = async record => supportsTriggers ? await notifyCard(record, true) : undefined;
-export const hasTriggers = supportsTriggers;
-export { get, close };
+export const schedule = async record => hasTriggers ? await notifyCard(record, true) : undefined;
+export { get, close, hasTriggers };
