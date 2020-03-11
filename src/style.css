@@ -114,12 +114,25 @@ a {
 
 /** STUFF ABOVE IS STANDARD FRAMEWORK **/
 
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.preview {
+  font-style: italic;
+  text-align: center;
+  line-height: 1.5;
+  opacity: var(--opacity-recolor);
+  margin-top: var(--spacing);
+}
+
 .main {
   position: relative;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   align-items: center;
   justify-content: center;
   padding-bottom: calc(var(--spacing));

@@ -81,6 +81,10 @@ export default () => {
       toast.info(msg.toString());
     });
 
+    if (!notification.hasTriggers) {
+      document.querySelector('#preview').classList.remove('hide');
+    }
+
     events.resume();
     events.emit('render');
   }).catch(function catchErr(err) {
