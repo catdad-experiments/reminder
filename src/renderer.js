@@ -133,8 +133,9 @@ export default ({ events, db, dom, notification }) => {
 
             await noErr(navigator.share(data));
           }) : dom.nill(),
-          dom.click(dom.icon('delete'), () => {
+          dom.click(dom.icon('delete'), async () => {
             deleteCard(card, record.id);
+            await noErr(notification.close(record.id));
           })
         )
       );
