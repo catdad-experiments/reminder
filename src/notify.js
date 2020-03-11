@@ -5,13 +5,9 @@ const hasTriggers = typeof Notification !== typeof undefined &&
   'showTrigger' in Notification.prototype;
 
 const withRegistration = async (action, withoutRegistration = undefined) => {
-  const permission = await Notification.requestPermission();
-
-  if (permission !== 'granted') {
-    return withoutRegistration;
-  }
-
-  return await action(await navigator.serviceWorker.ready);
+  return 'granted' === await Notification.requestPermission() ?
+    await action(await navigator.serviceWorker.ready) :
+    withoutRegistration;
 };
 
 const withTriggers = opts => hasTriggers ? Object.assign({ includeTriggered: true }, opts) : opts;
