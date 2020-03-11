@@ -76,7 +76,7 @@ export default ({ events, db, dom, notification }) => {
       [tonight, 'Tonight'],
       [tomorrowMorning, 'Tomorrow Morning'],
       [tomorrowEvening, 'Tomorrow Evening']
-    ].map(([date, name], idx) => {
+    ].filter(([date]) => date >= now).map(([date, name]) => {
       const elem = dom.button(name, () => {
         deselect();
         elem.classList.add('selected');
