@@ -124,8 +124,17 @@ body {
   font-style: italic;
   text-align: center;
   line-height: 1.5;
-  opacity: var(--opacity-recolor);
   margin-top: var(--spacing);
+}
+
+.preview > div {
+  background: var(--foreground);
+  color: var(--background);
+  width: calc(100% - 40px);
+  padding: 10px;
+  border-radius: 5px;
+  margin: 0 auto;
+  box-shadow: 0 6px 16px -2px black;
 }
 
 .main {
