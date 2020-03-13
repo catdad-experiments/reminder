@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-export default ({ events, db, dom }) => {
+export default ({ events, db, dom, notification }) => {
   const arrayBuffer = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -16,11 +16,11 @@ export default ({ events, db, dom }) => {
     const { name: filename, type: filetype } = file;
     const filebuffer = await arrayBuffer(file);
 
-    await db.save({ filename, filetype, filebuffer, createdAt, remindAt });
+    return await db.save({ filename, filetype, filebuffer, createdAt, remindAt });
   };
 
   const savePlainShare = async ({ title, text, url, createdAt, remindAt }) => {
-    await db.save({ title, text, url, createdAt, remindAt });
+    return await db.save({ title, text, url, createdAt, remindAt });
   };
 
   const fileSplash = ({ file }) => {
@@ -71,30 +71,27 @@ export default ({ events, db, dom }) => {
 
     let result;
 
-    const TONIGHT = dom.button('Tonight', () => {
-      deselect();
-      TONIGHT.classList.add('selected');
+    const elems = [
+      [tonight, 'Tonight'],
+      [tomorrowMorning, 'Tomorrow Morning'],
+      [tomorrowEvening, 'Tomorrow Evening'],
+      [now, 'Now']
+    ].filter(([date]) => date >= now).map(([date, name]) => {
+      const elem = dom.button(name, () => {
+        deselect();
+        elem.classList.add('selected');
 
-      result = tonight;
-    });
-    const MORNING = dom.button('Tomorrow Morning', () => {
-      deselect();
-      MORNING.classList.add('selected');
+        result = date;
+      });
 
-      result = tomorrowMorning;
-    });
-    const EVENING = dom.button('Tomorrow Evening', () => {
-      deselect();
-      EVENING.classList.add('selected');
-
-      result = tomorrowEvening;
+      return elem;
     });
 
-    const deselect = () => void [TONIGHT, MORNING, EVENING].forEach(e => e.classList.remove('selected'));
+    const deselect = () => void elems.forEach(e => e.classList.remove('selected'));
 
-    TONIGHT.click();
+    elems[0].click();
 
-    return [() => result, TONIGHT, MORNING, EVENING];
+    return [() => result, ...elems];
   };
 
   const splash = ({ title, text, url, file }) => {
@@ -112,12 +109,22 @@ export default ({ events, db, dom }) => {
 
         const save = file ? saveFileShare(data) : savePlainShare(data);
 
-        save.then(() => {
+        save.then(id => {
           events.emit('render');
+          return id;
         }).catch(e => {
           console.error(e);
-        }).then(() => {
+        }).then(id => {
           elem.remove();
+
+          data.id = id;
+
+          if (reminder() < new Date()) {
+            // user wants notification now
+            return notification.show(data);
+          }
+
+          return notification.schedule(data);
         });
       })
     );

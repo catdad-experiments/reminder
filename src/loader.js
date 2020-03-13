@@ -52,17 +52,19 @@ export default () => {
   Promise.all([
     load('./db.js'),
     load('./dom.js'),
+    load('./notify.js'),
     load('./receiver.js'),
     load('./renderer.js'),
     load('./create.js'),
   ]).then(async ([
     DB,
     dom,
+    notification,
     ...modules
   ]) => {
     // set up a global event emitter
     const db = await DB();
-    const context = { events, load, dom, db };
+    const context = { events, load, dom, db, notification };
     const destroys = await map(modules, mod => mod(context));
 
     context.events.on('error', function (err) {
@@ -78,6 +80,10 @@ export default () => {
       console.log(TOAST, msg);
       toast.info(msg.toString());
     });
+
+    if (!notification.hasTriggers) {
+      document.querySelector('#preview').classList.remove('hide');
+    }
 
     events.resume();
     events.emit('render');
