@@ -110,7 +110,7 @@ export default ({ events, db, notification }) => {
       const isFile = 'filebuffer' in record;
 
       children.push(html`
-        <div key=${record.id} class=${['card'].concat(record.id === FOCUS_ID ? ['focused'] : []).join(' ')} data-id=${record.id}>
+        <div key=card${record.id} class=${['card'].concat(record.id === FOCUS_ID ? ['focused'] : []).join(' ')} data-id=${record.id}>
           <${Card} ...${record} />
           <div class=buttons>
             <${ReminderDate} remindAt=${record.remindAt} />
