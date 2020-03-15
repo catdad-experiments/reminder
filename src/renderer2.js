@@ -13,15 +13,15 @@ const dateString = date => {
   return `${day}, ${date.toLocaleDateString()}, ${hour}`;
 };
 
-const imageUrl = ({ filebuffer, filetype }) => {
-  return `data:${filetype};base64,${btoa(new Uint8Array(filebuffer)
-    .reduce((data, byte) => data + String.fromCharCode(byte), ''))}`;
-};
-
 const ImageCard = record => {
+  const url = URL.createObjectURL(new Blob([record.filebuffer]));
+
   return html`
-    <${Fragment}>
-      <img src=${imageUrl(record)} />
+    <${Fragment} key=fragment${record.id}>
+      <img key=img${record.id} src=${url} onload=${() => {
+        console.log('revoke url', record.id);
+        URL.revokeObjectURL(url);
+      }} />
       <div class=text>
         ${record.filename} (${record.filetype})
       </div>
