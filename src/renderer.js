@@ -95,8 +95,6 @@ export default ({ events, db, notification }) => {
   let FOCUS_ID;
 
   const onRender = async () => {
-    console.time('preact render');
-
     const notifications = (await notification.get()).reduce((m, n) => {
       m[n.id] = n;
       return m;
@@ -139,11 +137,7 @@ export default ({ events, db, notification }) => {
       `);
     });
 
-    console.time('preact');
     render(html`<${Fragment}>${children.reverse()}<//>`, elem);
-    console.timeEnd('preact');
-
-    console.timeEnd('preact render');
 
     events.emit('render-complete');
   };
