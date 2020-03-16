@@ -25,6 +25,22 @@ const FEATURES = [
       window.webkitIndexedDB ||
       window.msIndexedDB
     );
+  }],
+  ['Rest Parameters', () => {
+    try {
+      new Function('function f(...rest) {}')(1,2);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }],
+  ['Destructuring Rest Parameters', () => {
+    try {
+      new Function('function f({ a, ...rest }) {}')({a:1,b:2});
+      return true;
+    } catch (err) {
+      return false;
+    }
   }]
 ];
 
