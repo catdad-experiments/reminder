@@ -102,20 +102,36 @@ export default ({ events, db, notification }) => {
 
     console.log(notifications);
 
+    const isPreview = !notification.hasTriggers;
+
     const children = [];
 
     await db.each(null, record => {
       const isFile = 'filebuffer' in record;
+
+      const hasNotification = !!notifications[record.id];
+      const notificationIcon = isPreview ? 'notifications_active' :
+        hasNotification ? 'notifications_off' : null;
 
       children.push(html`
         <div key=card${record.id} class=${['card'].concat(record.id === FOCUS_ID ? ['focused'] : []).join(' ')} data-id=${record.id}>
           <${Card} ...${record} />
           <div class=buttons>
             <${ReminderDate} remindAt=${record.remindAt} />
-            <${Icon} name=notifications_active onClick=${async (e) => {
+            ${!notificationIcon ? null : html`<${Icon} name=${notificationIcon} onClick=${async (e) => {
               e.stopPropagation();
-              await noErr(notification.show(record));
-            }}/>
+
+              if (isPreview) {
+                await noErr(notification.show(record));
+                return;
+              }
+
+              if (notificationIcon === 'notifications_off') {
+                await noErr(notification.close(record.id));
+                await noErr(onRender());
+                return;
+              }
+            }}/>`}
             ${isFile ? null : html`<${Icon} name=share onClick=${async (e) => {
               e.stopPropagation();
 
