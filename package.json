@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx multispawn npx serve -l 8002 ! ssh -R 80:localhost:8002 ssh.localhost.run"
+    "start": "serve -l 8002",
+    "ssh-tunnel": "ssh -R 80:localhost:8002 ssh.localhost.run",
+    "dev": "multispawn npm start ! npm run -s ssh-tunnel"
   },
   "author": "Kiril Vatev <vatev.1@gmail.com>",
   "license": "ISC",
