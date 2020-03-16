@@ -145,6 +145,7 @@ export default ({ events, db, notification }) => {
             <${Icon} name=delete onClick=${async (e) => {
               e.stopPropagation();
               await noErr(db.remove({ id: record.id }));
+              await noErr(notification.close(record.id));
               await noErr(onRender());
             }}/>
           </div>
