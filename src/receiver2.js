@@ -13,6 +13,78 @@ const arrayBuffer = (file) => {
   });
 };
 
+const fileSplash = ({ file }) => {
+  const url = URL.createObjectURL(file);
+
+  const BODY = html`<div>
+    <img src=${url} onload=${() => URL.revokeObjectURL(url)} />
+    <div class=text>file name: ${file.name}</div>
+    <div class=text>file type: ${file.type}</div>
+    <div class=text>file size: ${file.size}</div>
+    <div class=text></div>
+  </div>`;
+
+  const serializer = () => ({ file });
+
+  return [serializer, BODY];
+};
+
+const plainSplash = ({ title, text, url }) => {
+  const field = (content, title, type, change) =>
+    html`<div class="edit ${type}" data-ttile=${title} oninput=${change} contenteditable>${content}</div>`;
+
+  const TITLE = field(title || '', 'Title', 'title', (e) => {
+    title = e.target.innerText.trim();
+  });
+  const TEXT = field(text || '', 'Text', 'text', (e) => {
+    text = e.target.innerText.trim();
+  });
+  const URL = typeof url === 'string' ? field(url, 'URL', 'text', (e) => {
+    url = e.target.innerText.trim();
+  }) : null;
+
+  const serializer = () => ({ title, text, url });
+
+  return [serializer, TITLE, TEXT, URL].filter(i => !!i);
+};
+
+const reminders = () => {
+  const now = new Date();
+  const tonight = new Date(new Date(now).setHours(21, 0, 0));
+  const tomorrowMorning = new Date(new Date(now).setHours(24 + 8, 0, 0));
+  const tomorrowEvening = new Date(new Date(now).setHours(24 + 21, 0, 0));
+
+  let result;
+  const refs = [];
+
+  const deselect = () => refs.forEach(r => r.current.classList.remove('selected'));
+
+  const elems = [
+    [tonight, 'Tonight'],
+    [tomorrowMorning, 'Tomorrow Morning'],
+    [tomorrowEvening, 'Tomorrow Evening'],
+    [now, 'Now']
+  ].filter(([date]) => date >= now).map(([date, name], idx) => {
+    const ref = {};
+    const classname = idx === 0 ? 'selected' : '';
+
+    if (idx === 0) {
+      result = date;
+    }
+
+    refs.push(ref);
+
+    return html`<button class=${classname} ref=${ref} onclick=${() => {
+      deselect();
+      ref.current.classList.add('selected');
+
+      result = date;
+    }}>${name}</button>`;
+  });
+
+  return [() => result, ...elems];
+};
+
 export default ({ events, db, notification }) => {
   const saveFileShare = async ({ file, createdAt, remindAt }) => {
     const { name: filename, type: filetype } = file;
@@ -23,77 +95,6 @@ export default ({ events, db, notification }) => {
 
   const savePlainShare = async ({ title, text, url, createdAt, remindAt }) => {
     return await db.save({ title, text, url, createdAt, remindAt });
-  };
-
-  const fileSplash = ({ file }) => {
-    const url = URL.createObjectURL(file);
-
-    const BODY = html`<div>
-      <img src=${url} onload=${() => {
-        URL.revokeObjectURL(url);
-      }} />
-      <div class=text>file name: ${file.name}</div>
-      <div class=text>file type: ${file.type}</div>
-      <div class=text>file size: ${file.size}</div>
-      <div class=text></div>
-    </div>`;
-
-    const serializer = () => ({ file });
-
-    return [serializer, BODY];
-  };
-
-  const plainSplash = ({ title, text, url }) => {
-    const TITLE = html`<div class="title edit" contenteditable oninput=${(e) => {
-      title = e.target.innerText.trim();
-    }} data-title=Title>${title || ''}</div>`;
-    const TEXT = html`<div class="text edit" contenteditable oninput=${(e) => {
-      text = e.target.innerText.trim();
-    }} data-title=Text>${text || ''}</div>`;
-    const URL = typeof url === 'string' ? html`<div class="text edit" contenteditable oninput=${(e) => {
-      url = e.target.innerText.trim();
-    }} data-title=URL>${url}</div>` : null;
-
-    const serializer = () => ({ title, text, url });
-
-    return [serializer, TITLE, TEXT, URL].filter(i => !!i);
-  };
-
-  const reminders = () => {
-    const now = new Date();
-    const tonight = new Date(new Date(now).setHours(21, 0, 0));
-    const tomorrowMorning = new Date(new Date(now).setHours(24 + 8, 0, 0));
-    const tomorrowEvening = new Date(new Date(now).setHours(24 + 21, 0, 0));
-
-    let result;
-    const refs = [];
-
-    const deselect = () => refs.forEach(r => r.current.classList.remove('selected'));
-
-    const elems = [
-      [tonight, 'Tonight'],
-      [tomorrowMorning, 'Tomorrow Morning'],
-      [tomorrowEvening, 'Tomorrow Evening'],
-      [now, 'Now']
-    ].filter(([date]) => date >= now).map(([date, name], idx) => {
-      const ref = {};
-      const classname = idx === 0 ? 'selected' : '';
-
-      if (idx === 0) {
-        result = date;
-      }
-
-      refs.push(ref);
-
-      return html`<button class=${classname} ref=${ref} onclick=${() => {
-        deselect();
-        ref.current.classList.add('selected');
-
-        result = date;
-      }}>${name}</button>`;
-    });
-
-    return [() => result, ...elems];
   };
 
   const splash = ({ title, text, url, file }) => {
