@@ -1,5 +1,3 @@
-/* eslint-disable indent, no-console */
-
 import { html, render, Fragment } from './preact.js';
 
 const noErr = prom => prom.catch(e => {
@@ -18,10 +16,7 @@ const ImageCard = record => {
 
   return html`
     <${Fragment} key=fragment${record.id}>
-      <img key=img${record.id} src=${url} onload=${() => {
-        console.log('revoke url', record.id);
-        URL.revokeObjectURL(url);
-      }} />
+      <img key=img${record.id} src=${url} onload=${() => void URL.revokeObjectURL(url)} />
       <div class=text>
         ${record.filename} (${record.filetype})
       </div>

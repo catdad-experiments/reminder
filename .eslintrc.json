@@ -10,7 +10,11 @@
   },
   "rules": {
     "indent": ["error", 2, {
-      "SwitchCase": 1
+      "SwitchCase": 1,
+      "ignoredNodes": [
+        "TemplateLiteral *",
+        "TaggedTemplateExpression *"
+      ]
     }],
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single"],

@@ -1,5 +1,3 @@
-/* eslint-disable indent, no-console */
-
 import { html, render } from './preact.js';
 
 const arrayBuffer = (file) => {
@@ -17,7 +15,7 @@ const fileSplash = ({ file }) => {
   const url = URL.createObjectURL(file);
 
   const BODY = html`<div>
-    <img src=${url} onload=${() => URL.revokeObjectURL(url)} />
+    <img src=${url} onload=${() => void URL.revokeObjectURL(url)} />
     <div class=text>file name: ${file.name}</div>
     <div class=text>file type: ${file.type}</div>
     <div class=text>file size: ${file.size}</div>
@@ -123,6 +121,7 @@ export default ({ events, db, notification }) => {
             events.emit('render');
             return id;
           }).catch(e => {
+            // eslint-disable-next-line no-console
             console.error(e);
           }).then(id => {
             elem.remove();
