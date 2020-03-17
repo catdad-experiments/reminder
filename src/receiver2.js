@@ -2,18 +2,18 @@
 
 import { html, render } from './preact.js';
 
-export default ({ events, db, dom, notification }) => {
-  const arrayBuffer = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
+const arrayBuffer = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
 
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = e => reject(e);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = e => reject(e);
 
-      reader.readAsArrayBuffer(file);
-    });
-  };
+    reader.readAsArrayBuffer(file);
+  });
+};
 
+export default ({ events, db, notification }) => {
   const saveFileShare = async ({ file, createdAt, remindAt }) => {
     const { name: filename, type: filetype } = file;
     const filebuffer = await arrayBuffer(file);
@@ -100,7 +100,8 @@ export default ({ events, db, dom, notification }) => {
     const [serializer, ...cardFields] = file ? fileSplash({ file }) : plainSplash({ title, text, url });
     const [reminder, ...reminderButtons] = reminders();
 
-    const elem = dom.div('splash');
+    const elem = document.createElement('div');
+    elem.classList.add('splash');
 
     const stuff = html`<div class=limit>
       <div class=card>${cardFields}</div>
