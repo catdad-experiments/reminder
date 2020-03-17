@@ -31,7 +31,7 @@ const fileSplash = ({ file }) => {
 
 const plainSplash = ({ title, text, url }) => {
   const field = (content, title, type, change) =>
-    html`<div class="edit ${type}" data-ttile=${title} oninput=${change} contenteditable>${content}</div>`;
+    html`<div class="edit ${type}" data-title=${title} oninput=${change} contenteditable>${content}</div>`;
 
   const TITLE = field(title || '', 'Title', 'title', (e) => {
     title = e.target.innerText.trim();
