@@ -46,7 +46,7 @@ const plainSplash = ({ title, text, url }) => {
   return [serializer, TITLE, TEXT, URL].filter(i => !!i);
 };
 
-const reminders = () => {
+const reminders = (hasTriggers) => {
   const now = new Date();
   const tonight = new Date(new Date(now).setHours(21, 0, 0));
   const tomorrowMorning = new Date(new Date(now).setHours(24 + 8, 0, 0));
@@ -58,9 +58,9 @@ const reminders = () => {
   const deselect = () => refs.forEach(r => r.current.classList.remove('selected'));
 
   const elems = [
-    [tonight, 'Tonight'],
-    [tomorrowMorning, 'Tomorrow Morning'],
-    [tomorrowEvening, 'Tomorrow Evening'],
+    [hasTriggers ? tonight : 0, 'Tonight'],
+    [hasTriggers ? tomorrowMorning : 0, 'Tomorrow Morning'],
+    [hasTriggers ? tomorrowEvening : 0, 'Tomorrow Evening'],
     [now, 'Now']
   ].filter(([date]) => date >= now).map(([date, name], idx) => {
     const ref = {};
@@ -97,7 +97,7 @@ export default ({ events, db, notification }) => {
 
   const splash = ({ title, text, url, file }) => {
     const [serializer, ...cardFields] = file ? fileSplash({ file }) : plainSplash({ title, text, url });
-    const [reminder, ...reminderButtons] = reminders();
+    const [reminder, ...reminderButtons] = reminders(notification.hasTriggers);
 
     const elem = document.createElement('div');
     elem.classList.add('splash');
