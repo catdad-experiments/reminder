@@ -117,23 +117,21 @@ export default ({ events, db, notification }) => {
 
           const save = file ? saveFileShare(data) : savePlainShare(data);
 
-          save.then(id => {
-            events.emit('render');
-            return id;
-          }).catch(e => {
-            // eslint-disable-next-line no-console
-            console.error(e);
-          }).then(id => {
-            elem.remove();
-
+          save.then(async id => {
             data.id = id;
 
             if (reminder() < new Date()) {
               // user wants notification now
-              return notification.show(data);
+              return await notification.show(data);
             }
 
-            return notification.schedule(data);
+            await notification.schedule(data);
+          }).catch(e => {
+            // eslint-disable-next-line no-console
+            console.error(e);
+          }).then(() => {
+            elem.remove();
+            events.emit('render');
           });
         }}>Save</button>
       </div>
