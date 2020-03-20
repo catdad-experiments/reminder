@@ -59,7 +59,7 @@ self.addEventListener('notificationclick', (event) => {
       includeUncontrolled: true
     });
 
-    let owner = allClients[0] || await clients.openWindow('..');
+    let owner = allClients[0] || await clients.openWindow('./');
 
     if (allClients[0]) {
       owner.focus();
