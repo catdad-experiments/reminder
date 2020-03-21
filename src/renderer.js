@@ -79,8 +79,8 @@ const Card = record => {
   `;
 };
 
-const ReminderDate = ({ remindAt }) => {
-  return html`<span class=date>${remindAt ? dateString(new Date(remindAt)) : 'Never'}</span>`;
+const ReminderDate = ({ remindAt, ...props }) => {
+  return html`<span class=date ...${props}>${remindAt ? dateString(new Date(remindAt)) : 'Never'}</span>`;
 };
 
 const Icon = ({ name, ...rest }) => {
@@ -114,7 +114,17 @@ export default ({ events, db, notification }) => {
         <div key=card${record.id} class=${['card'].concat(record.id === FOCUS_ID ? ['focused'] : []).join(' ')} data-id=${record.id}>
           <${Card} ...${record} />
           <div class=buttons>
-            <${ReminderDate} remindAt=${record.remindAt} />
+            <${ReminderDate} remindAt=${record.remindAt} onClick=${() => {
+              const item = isFile ? {
+                id: record.id,
+                file: toFile(record.filebuffer, {
+                  name: record.filename,
+                  type: record.filetype,
+                  size: record.filebuffer.length
+                })
+              } : Object.assign({}, record);
+              events.emit('receive-share', item);
+            }} />
             ${!notificationIcon ? null : html`<${Icon} name=${notificationIcon} onClick=${async (e) => {
               e.stopPropagation();
 

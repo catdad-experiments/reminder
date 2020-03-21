@@ -84,18 +84,19 @@ const reminders = (hasTriggers) => {
 };
 
 export default ({ events, db, notification }) => {
-  const saveFileShare = async ({ file, createdAt, remindAt }) => {
+  const saveFileShare = async ({ file, ...rest }) => {
     const { name: filename, type: filetype } = file;
     const filebuffer = await arrayBuffer(file);
 
-    return await db.save({ filename, filetype, filebuffer, createdAt, remindAt });
+    return await db.save({ filename, filetype, filebuffer, ...rest });
   };
 
-  const savePlainShare = async ({ title, text, url, createdAt, remindAt }) => {
-    return await db.save({ title, text, url, createdAt, remindAt });
+  const savePlainShare = async ({ title, text, url, ...rest }) => {
+    return await db.save({ title, text, url, ...rest });
   };
 
-  const splash = ({ title, text, url, file }) => {
+  const splash = ({ title, text, url, file, id }) => {
+    console.log('splash with', title, id);
     const [serializer, ...cardFields] = file ? fileSplash({ file }) : plainSplash({ title, text, url });
     const [reminder, ...reminderButtons] = reminders(notification.hasTriggers);
 
@@ -114,6 +115,10 @@ export default ({ events, db, notification }) => {
           const data = serializer();
           data.createdAt = Date.now();
           data.remindAt = reminder().getTime();
+
+          if (id !== undefined) {
+            data.id = id;
+          }
 
           const save = file ? saveFileShare(data) : savePlainShare(data);
 
@@ -142,8 +147,8 @@ export default ({ events, db, notification }) => {
     document.body.appendChild(elem);
   };
 
-  const onShare = async ({ title, text, url, file }) => {
-    splash({ title, text, url, file });
+  const onShare = async ({ title, text, url, file, id }) => {
+    splash({ title, text, url, file, id });
   };
 
   events.on('receive-share', onShare);
