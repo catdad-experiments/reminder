@@ -5,6 +5,8 @@ const noErr = prom => prom.catch(e => {
   console.error('Hanlded Error:', e);
 });
 
+const toFile = (data, { name, type } = {}) => new File([data], name, { type });
+
 const dateString = date => {
   const day = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()];
   const hour = `${date.getHours() % 12 || 12} ${date.getHours() < 12 ? 'am' : 'pm'}`;
@@ -12,7 +14,7 @@ const dateString = date => {
 };
 
 const ImageCard = record => {
-  const url = URL.createObjectURL(new Blob([record.filebuffer]));
+  const url = URL.createObjectURL(toFile(record.filebuffer));
 
   return html`
     <${Fragment} key=fragment${record.id}>
@@ -77,8 +79,8 @@ const Card = record => {
   `;
 };
 
-const ReminderDate = ({ remindAt }) => {
-  return html`<span class=date>${remindAt ? dateString(new Date(remindAt)) : 'Never'}</span>`;
+const ReminderDate = ({ remindAt, ...props }) => {
+  return html`<span class=date ...${props}>${remindAt ? dateString(new Date(remindAt)) : 'Never'}</span>`;
 };
 
 const Icon = ({ name, ...rest }) => {
@@ -95,8 +97,6 @@ export default ({ events, db, notification }) => {
       return m;
     }, {});
 
-    console.log(notifications);
-
     const isPreview = !notification.hasTriggers;
 
     const children = [];
@@ -112,7 +112,17 @@ export default ({ events, db, notification }) => {
         <div key=card${record.id} class=${['card'].concat(record.id === FOCUS_ID ? ['focused'] : []).join(' ')} data-id=${record.id}>
           <${Card} ...${record} />
           <div class=buttons>
-            <${ReminderDate} remindAt=${record.remindAt} />
+            <${ReminderDate} remindAt=${record.remindAt} onClick=${() => {
+              const item = isFile ? {
+                id: record.id,
+                file: toFile(record.filebuffer, {
+                  name: record.filename,
+                  type: record.filetype,
+                  size: record.filebuffer.length
+                })
+              } : Object.assign({}, record);
+              events.emit('receive-share', item);
+            }} />
             ${!notificationIcon ? null : html`<${Icon} name=${notificationIcon} onClick=${async (e) => {
               e.stopPropagation();
 
@@ -149,7 +159,14 @@ export default ({ events, db, notification }) => {
       `);
     });
 
-    render(html`<${Fragment}>${children.reverse()}<//>`, elem);
+    if (children.length) {
+      render(html`<${Fragment}>${children.reverse()}<//>`, elem);
+    } else {
+      render(html`<div class="preview">
+        <p>You have no reminders yet.</p>
+        <p>Add one using the plus button.</p>
+      </div>`, elem);
+    }
 
     events.emit('render-complete');
   };

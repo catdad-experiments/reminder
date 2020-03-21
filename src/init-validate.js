@@ -2,6 +2,7 @@ const FEATURES = [
   'Promise',
   'Map',
   'localStorage',
+  'File',
   ['dynamic import', () => {
     try {
       new Function('import("").catch(() => {})')();
