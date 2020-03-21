@@ -26,7 +26,8 @@ const init = once(async () => {
   db.version(1).stores(SCHEMA_V1);
 
   const save = async data => {
-    return await db[TABLE].add(data);
+    // put is an upsert operation
+    return await db[TABLE].put(data);
   };
 
   const removeAll = async () => {
