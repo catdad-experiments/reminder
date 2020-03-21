@@ -96,7 +96,6 @@ export default ({ events, db, notification }) => {
   };
 
   const splash = ({ title, text, url, file, id }) => {
-    console.log('splash with', title, id);
     const [serializer, ...cardFields] = file ? fileSplash({ file }) : plainSplash({ title, text, url });
     const [reminder, ...reminderButtons] = reminders(notification.hasTriggers);
 
