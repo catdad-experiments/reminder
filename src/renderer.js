@@ -161,7 +161,14 @@ export default ({ events, db, notification }) => {
       `);
     });
 
-    render(html`<${Fragment}>${children.reverse()}<//>`, elem);
+    if (children.length) {
+      render(html`<${Fragment}>${children.reverse()}<//>`, elem);
+    } else {
+      render(html`<div class="preview">
+        <p>You have no reminders yet.</p>
+        <p>Add one using the plus button.</p>
+      </div>`, elem);
+    }
 
     events.emit('render-complete');
   };
