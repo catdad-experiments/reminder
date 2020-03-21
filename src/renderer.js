@@ -97,8 +97,6 @@ export default ({ events, db, notification }) => {
       return m;
     }, {});
 
-    console.log(notifications);
-
     const isPreview = !notification.hasTriggers;
 
     const children = [];
