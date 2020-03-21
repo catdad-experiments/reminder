@@ -5,6 +5,8 @@ const noErr = prom => prom.catch(e => {
   console.error('Hanlded Error:', e);
 });
 
+const toFile = (data, { name, type } = {}) => new File([data], name, { type });
+
 const dateString = date => {
   const day = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()];
   const hour = `${date.getHours() % 12 || 12} ${date.getHours() < 12 ? 'am' : 'pm'}`;
@@ -12,7 +14,7 @@ const dateString = date => {
 };
 
 const ImageCard = record => {
-  const url = URL.createObjectURL(new Blob([record.filebuffer]));
+  const url = URL.createObjectURL(toFile(record.filebuffer));
 
   return html`
     <${Fragment} key=fragment${record.id}>
