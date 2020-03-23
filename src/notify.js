@@ -24,7 +24,7 @@ const create = async (title, opts, showAsTrigger = false) => {
       return;
     }
 
-    return registration.showNotification(title || 'Reminder', data);
+    return registration.showNotification(title, data);
   });
 };
 
@@ -51,14 +51,15 @@ const notifyCard = async ({
 }, showAsTrigger = false) => {
   if (filebuffer) {
     const image = URL.createObjectURL(new Blob([filebuffer]));
-    await create(filename, {
+    await create('', {
       image,
+      body: filename,
       tag: `${id}`,
       timestamp: remindAt
     }, showAsTrigger);
     URL.revokeObjectURL(image);
   } else {
-    await create(title, {
+    await create(title || 'Reminder', {
       body: text ? `${text}` : undefined,
       tag: `${id}`,
       timestamp: remindAt
