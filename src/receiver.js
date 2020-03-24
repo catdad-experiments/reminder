@@ -122,14 +122,14 @@ export default ({ events, db, notification }) => {
           const save = file ? saveFileShare(data) : savePlainShare(data);
 
           save.then(async id => {
-            data.id = id;
+            const record = await db.get({ id });
 
             if (reminder() < new Date()) {
               // user wants notification now
-              return await notification.show(data);
+              return await notification.show(record);
             }
 
-            await notification.schedule(data);
+            await notification.schedule(record);
           }).catch(e => {
             // eslint-disable-next-line no-console
             console.error(e);
