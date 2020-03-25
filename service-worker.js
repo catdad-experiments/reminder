@@ -7,17 +7,37 @@ const WORKER = '👷';
 // eslint-disable-next-line no-console
 const log = (...args) => console.log(WORKER, VERSION, ...args);
 
+const messages = new Map();
+
+const nextMessage = name => new Promise(resolve => {
+  messages.set(name, messages.get(name) || []);
+  messages.get(name).push((data) => resolve(data));
+});
+
 const serveShareTarget = event => {
   // Redirect so the user can refresh the page without resending data.
   event.respondWith(Response.redirect(event.request.url));
 
   event.waitUntil(async function () {
+    await nextMessage('init-ready');
     const data = await event.request.formData();
     const client = await self.clients.get(event.resultingClientId);
     const [title, text, url, file] = ['title', 'text', 'url', 'file'].map(n => data.get(n));
     client.postMessage({ title, text, url, file, action: 'receive-share' });
   }());
 };
+
+self.addEventListener('message', (event) => {
+  log('message', event);
+
+  const name = event.data;
+  const resolvers = messages.get(name) || [];
+  messages.delete(name);
+
+  for (let resolve of resolvers) {
+    resolve();
+  }
+});
 
 self.addEventListener('install', (event) => {
   log('install', event);
