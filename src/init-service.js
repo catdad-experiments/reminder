@@ -41,6 +41,10 @@ export default ({ events }) => {
 
       log('unknown message - ', ev.data);
     });
+
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage('init-ready');
+    }
   } else {
     log('service worker is not supported');
   }
