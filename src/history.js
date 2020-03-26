@@ -1,14 +1,25 @@
 const toFile = (data, { name, type } = {}) => new File([data], name, { type });
 
+// eslint-disable-next-line no-console
+const log = (first, ...rest) => console.log(`📖 ${first}`, ...rest);
+
 export default ({ events, db }) => {
-  const go = ({ id }) => {
+  const go = ({ id } = {}) => {
+    if (!id) {
+      window.history.pushState(null, 'root', '.');
+      events.emit('render');
+
+      return;
+    }
+
     db.get({ id }).then(record => {
+      window.history.pushState(id, `${id}`, `#${id}`);
+
       const item = record.filebuffer ? {
         id: record.id,
         file: toFile(record.filebuffer, {
           name: record.filename,
-          type: record.filetype,
-          size: record.filebuffer.length
+          type: record.filetype
         })
       } : Object.assign({}, record);
 
@@ -34,11 +45,25 @@ export default ({ events, db }) => {
     }
   };
 
+  const popState = (ev) => {
+    const { state: id } = ev;
+
+    log('pop:', id);
+
+    if (id) {
+      return void events.emit('history-go', { id });
+    }
+  };
+
   events.on('history-go', go);
   events.on('history-share', share);
+
+  window.addEventListener('popstate', popState);
 
   return () => {
     events.off('history-go', go);
     events.off('history-share', share);
+
+    window.removeEventListener('popstate', popState);
   };
 };

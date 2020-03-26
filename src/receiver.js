@@ -109,6 +109,7 @@ export default ({ events, db, notification }) => {
         <div>${reminderButtons}</div>
         <button onclick=${() => {
           elem.remove();
+          events.emit('history-go');
         }}>Cancel</button>
         <button onclick=${() => {
           const data = serializer();
@@ -135,7 +136,7 @@ export default ({ events, db, notification }) => {
             console.error(e);
           }).then(() => {
             elem.remove();
-            events.emit('render');
+            events.emit('history-go');
           });
         }}>Save</button>
       </div>
