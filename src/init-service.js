@@ -30,7 +30,7 @@ export default ({ events }) => {
 
       if (data.action === 'receive-share') {
         const { title, text, url, file } = data;
-        events.emit('receive-share', { title, text, url, file });
+        events.emit('history-share', { title, text, url, file });
         return;
       }
 
