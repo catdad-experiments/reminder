@@ -53,6 +53,7 @@ export default () => {
     load('./db.js'),
     load('./dom.js'),
     load('./notify.js'),
+    load('./history.js'),
     load('./receiver.js'),
     load('./renderer.js'),
     load('./create.js'),
