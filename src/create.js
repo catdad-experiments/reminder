@@ -49,13 +49,13 @@ export default ({ events, dom }) => {
         return;
       }
 
-      events.emit('receive-share', { file });
+      events.emit('history-share', { file });
     });
   };
 
   const onNote = () => {
     menu.classList.remove(OPEN);
-    events.emit('receive-share', {
+    events.emit('history-share', {
       title: '',
       text: ''
     });
