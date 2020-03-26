@@ -42,10 +42,10 @@ export default ({ events, db }) => {
     events.emit('render');
   };
 
-  const share = ({ title, text, url, file }) => {
+  const share = ({ title, text, url, file }, action = 'push') => {
     const ev = 'receive-share';
 
-    window.history.pushState('new', 'new', '#new');
+    state(action, 'new', 'new', '#new');
 
     if (file) {
       events.emit(ev, { file });
@@ -63,9 +63,12 @@ export default ({ events, db }) => {
   const ready = () => {
     log('ready');
 
-    const hashId = parseInt(window.location.hash.replace(/^#/, ''), 10);
+    const hashVal = window.location.hash.replace(/^#/, '');
+    const hashId = parseInt(hashVal, 10);
 
-    if (isNaN(hashId)) {
+    if (hashVal === 'new') {
+      share({ title: '', text: '' }, null);
+    } else if (isNaN(hashId)) {
       events.emit('render');
     } else {
       go({ id: hashId, action: 'replace' });
