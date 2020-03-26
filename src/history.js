@@ -4,33 +4,45 @@ const toFile = (data, { name, type } = {}) => new File([data], name, { type });
 const log = (first, ...rest) => console.log(`📖 ${first}`, ...rest);
 
 export default ({ events, db }) => {
-  const go = ({ id } = {}) => {
-    if (!id) {
-      window.history.pushState(null, 'root', '.');
-      events.emit('render');
+  const go = ({ id, push = true, replace = false } = {}) => {
+    if (id) {
+      log('go!', id);
 
-      return;
+      return void db.get({ id }).then(record => {
+        if (push) {
+          window.history.pushState(id, `${id}`, `#${id}`);
+        }
+
+        const item = record.filebuffer ? {
+          id: record.id,
+          file: toFile(record.filebuffer, {
+            name: record.filename,
+            type: record.filetype
+          })
+        } : Object.assign({}, record);
+
+        events.emit('receive-share', item);
+      }).catch(err => {
+        events.emit('warn', err);
+        go({ replace: true });
+      });
     }
 
-    db.get({ id }).then(record => {
-      window.history.pushState(id, `${id}`, `#${id}`);
+    if (replace) {
+      log('replace with root');
+      window.history.replaceState(null, 'root', '.');
+    } else {
+      log('go to root');
+      window.history.pushState(null, 'root', '.');
+    }
 
-      const item = record.filebuffer ? {
-        id: record.id,
-        file: toFile(record.filebuffer, {
-          name: record.filename,
-          type: record.filetype
-        })
-      } : Object.assign({}, record);
-
-      events.emit('receive-share', item);
-    }).catch(err => {
-      events.emit('warn', err);
-    });
+    events.emit('render');
   };
 
   const share = ({ title, text, url, file }) => {
     const ev = 'receive-share';
+
+    window.history.pushState('new', 'new', '#new');
 
     if (file) {
       events.emit(ev, { file });
@@ -50,9 +62,11 @@ export default ({ events, db }) => {
 
     log('pop:', id);
 
-    if (id) {
-      return void events.emit('history-go', { id });
+    if (id && id !== 'new') {
+      return void go({ id, push: false });
     }
+
+    return void go({ replace: true });
   };
 
   events.on('history-go', go);
