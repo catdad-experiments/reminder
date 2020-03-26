@@ -3,6 +3,7 @@ const FEATURES = [
   'Map',
   'localStorage',
   'File',
+  'history',
   ['dynamic import', () => {
     try {
       new Function('import("").catch(() => {})')();
