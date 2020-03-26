@@ -113,15 +113,7 @@ export default ({ events, db, notification }) => {
           <${Card} ...${record} />
           <div class=buttons>
             <${ReminderDate} remindAt=${record.remindAt} onClick=${() => {
-              const item = isFile ? {
-                id: record.id,
-                file: toFile(record.filebuffer, {
-                  name: record.filename,
-                  type: record.filetype,
-                  size: record.filebuffer.length
-                })
-              } : Object.assign({}, record);
-              events.emit('receive-share', item);
+              events.emit('history-go', record);
             }} />
             ${!notificationIcon ? null : html`<${Icon} name=${notificationIcon} onClick=${async (e) => {
               e.stopPropagation();
