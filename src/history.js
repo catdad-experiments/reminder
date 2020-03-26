@@ -4,14 +4,24 @@ const toFile = (data, { name, type } = {}) => new File([data], name, { type });
 const log = (first, ...rest) => console.log(`📖 ${first}`, ...rest);
 
 export default ({ events, db }) => {
-  const go = ({ id, push = true, replace = false } = {}) => {
+  const state = (action, value, title, url) => {
+    if (action === 'push') {
+      log('push state', value, title, url);
+      window.history.pushState(value, title, url);
+    }
+
+    if (action === 'replace') {
+      log('replace state', value, title, url);
+      window.history.replaceState(value, title, url);
+    }
+  };
+
+  const go = ({ id, action = 'push' } = {}) => {
     if (id) {
       log('go!', id);
 
       return void db.get({ id }).then(record => {
-        if (push) {
-          window.history.pushState(id, `${id}`, `#${id}`);
-        }
+        state(action, id, `${id}`, `#${id}`);
 
         const item = record.filebuffer ? {
           id: record.id,
@@ -28,14 +38,7 @@ export default ({ events, db }) => {
       });
     }
 
-    if (replace) {
-      log('replace with root');
-      window.history.replaceState(null, 'root', '.');
-    } else {
-      log('go to root');
-      window.history.pushState(null, 'root', '.');
-    }
-
+    state(action, null, 'root', '.');
     events.emit('render');
   };
 
@@ -57,26 +60,40 @@ export default ({ events, db }) => {
     }
   };
 
+  const ready = () => {
+    log('ready');
+
+    const hashId = parseInt(window.location.hash.replace(/^#/, ''), 10);
+
+    if (isNaN(hashId)) {
+      events.emit('render');
+    } else {
+      go({ id: hashId, action: 'replace' });
+    }
+  };
+
   const popState = (ev) => {
     const { state: id } = ev;
 
     log('pop:', id);
 
     if (id && id !== 'new') {
-      return void go({ id, push: false });
+      return void go({ id, action: null });
     }
 
-    return void go({ replace: true });
+    return void go({ action: 'replace' });
   };
 
   events.on('history-go', go);
   events.on('history-share', share);
+  events.once('ready', ready);
 
   window.addEventListener('popstate', popState);
 
   return () => {
     events.off('history-go', go);
     events.off('history-share', share);
+    events.off('ready', ready);
 
     window.removeEventListener('popstate', popState);
   };

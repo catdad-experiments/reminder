@@ -87,7 +87,7 @@ export default () => {
     }
 
     events.resume();
-    events.emit('render');
+    events.emit('ready');
   }).catch(function catchErr(err) {
     events.emit('error', err);
     onError(err);
