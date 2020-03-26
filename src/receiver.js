@@ -84,6 +84,8 @@ const reminders = (hasTriggers) => {
 };
 
 export default ({ events, db, notification }) => {
+  let elem;
+
   const saveFileShare = async ({ file, ...rest }) => {
     const { name: filename, type: filetype } = file;
     const filebuffer = await arrayBuffer(file);
@@ -99,7 +101,7 @@ export default ({ events, db, notification }) => {
     const [serializer, ...cardFields] = file ? fileSplash({ file }) : plainSplash({ title, text, url });
     const [reminder, ...reminderButtons] = reminders(notification.hasTriggers);
 
-    const elem = document.createElement('div');
+    elem = elem || document.createElement('div');
     elem.classList.add('splash');
 
     const stuff = html`<div class=limit>
@@ -151,9 +153,17 @@ export default ({ events, db, notification }) => {
     splash({ title, text, url, file, id });
   };
 
+  const onRender = () => {
+    if (elem && document.body.contains(elem)) {
+      elem.remove();
+    }
+  };
+
   events.on('receive-share', onShare);
+  events.on('render', onRender);
 
   return () => {
     events.off('receive-share', onShare);
+    events.off('render', onRender);
   };
 };
