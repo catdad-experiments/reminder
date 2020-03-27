@@ -77,8 +77,13 @@ export default ({ events, db }) => {
 
   const popState = (ev) => {
     const { state: id } = ev;
+    const { hash } = window.location;
 
-    log('pop:', id);
+    log('pop:', { id, hash });
+
+    if (id === null && hash) {
+      return void ready();
+    }
 
     if (id && id !== 'new') {
       return void go({ id, action: null });

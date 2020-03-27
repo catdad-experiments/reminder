@@ -75,11 +75,19 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   event.waitUntil(async function() {
+    await clients.claim();
+
     const allClients = await clients.matchAll({
       includeUncontrolled: true
     });
 
-    let owner = allClients[0] || await clients.openWindow(`./#${tag}`);
-    owner.focus();
+    const url = `./#${tag}`;
+
+    if (allClients[0]) {
+      await allClients[0].focus();
+      await allClients[0].navigate(url);
+    } else {
+      await clients.openWindow(url);
+    }
   }());
 });
