@@ -6,19 +6,19 @@ const log = (first, ...rest) => console.log(`📖 ${first}`, ...rest);
 export default ({ events, db }) => {
   const state = (action, value, title, url) => {
     if (action === 'push') {
-      log('push state', value, title, url);
+      log('push state', { value, title, url });
       window.history.pushState(value, title, url);
     }
 
     if (action === 'replace') {
-      log('replace state', value, title, url);
+      log('replace state', { value, title, url });
       window.history.replaceState(value, title, url);
     }
   };
 
   const go = ({ id, action = 'push' } = {}) => {
     if (id) {
-      log('go!', id);
+      log('go!', { id });
 
       return void db.get({ id }).then(record => {
         state(action, id, `${id}`, `#${id}`);
