@@ -17,29 +17,37 @@ export default ({ events, db }) => {
   };
 
   const go = ({ id, action = 'push' } = {}) => {
-    if (id) {
-      log('go!', { id });
+    const unknown = () => {
+      state('replace', null, 'root', '.');
+      events.emit('render');
+    };
 
-      return void db.get({ id }).then(record => {
-        state(action, id, `${id}`, `#${id}`);
-
-        const item = record.filebuffer ? {
-          id: record.id,
-          file: toFile(record.filebuffer, {
-            name: record.filename,
-            type: record.filetype
-          })
-        } : Object.assign({}, record);
-
-        events.emit('receive-share', item);
-      }).catch(err => {
-        events.emit('warn', err);
-        go({ replace: true });
-      });
+    if (!id) {
+      return unknown();
     }
 
-    state(action, null, 'root', '.');
-    events.emit('render');
+    log('go!', { id });
+
+    return void db.get({ id }).then(record => {
+      if (!record) {
+        return unknown();
+      }
+
+      state(action, id, `${id}`, `#${id}`);
+
+      const item = record.filebuffer ? {
+        id: record.id,
+        file: toFile(record.filebuffer, {
+          name: record.filename,
+          type: record.filetype
+        })
+      } : Object.assign({}, record);
+
+      events.emit('receive-share', item);
+    }).catch(err => {
+      events.emit('warn', err);
+      unknown();
+    });
   };
 
   const share = ({ title, text, url, file }, action = 'push') => {
