@@ -79,12 +79,7 @@ self.addEventListener('notificationclick', (event) => {
       includeUncontrolled: true
     });
 
-    let owner = allClients[0] || await clients.openWindow('./');
-
-    if (allClients[0]) {
-      owner.focus();
-    }
-
-    owner.postMessage({ action: 'notification-click', id: Number(tag) });
+    let owner = allClients[0] || await clients.openWindow(`./#${tag}`);
+    owner.focus();
   }());
 });

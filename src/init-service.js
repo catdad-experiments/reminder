@@ -34,11 +34,6 @@ export default ({ events }) => {
         return;
       }
 
-      if (data.action === 'notification-click') {
-        events.emit('render-focus', { id: data.id });
-        return;
-      }
-
       log('unknown message - ', ev.data);
     });
 
