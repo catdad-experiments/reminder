@@ -294,6 +294,7 @@ i.material-icons {
   padding-left: var(--pad-size);
   padding-right: var(--pad-size);
   padding-top: var(--pad-size);
+  word-wrap: break-word;
 }
 .card .edit {
   padding-bottom: var(--pad-size);
