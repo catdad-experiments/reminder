@@ -83,6 +83,8 @@ self.addEventListener('notificationclick', (event) => {
 
     if (allClients[0]) {
       owner.focus();
+    } else {
+      await nextMessage('init-ready');
     }
 
     owner.postMessage({ action: 'notification-click', id: Number(tag) });
