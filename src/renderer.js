@@ -1,4 +1,4 @@
-import { html, render, Fragment } from './preact.js';
+import { html, render } from './preact.js';
 
 const noErr = prom => prom.catch(e => {
   // eslint-disable-next-line no-console
@@ -17,12 +17,10 @@ const ImageCard = record => {
   const url = URL.createObjectURL(toFile(record.filebuffer));
 
   return html`
-    <${Fragment} key=fragment${record.id}>
-      <img key=img${record.id} src=${url} onload=${() => void URL.revokeObjectURL(url)} />
-      <div class=text>
-        ${record.filename} (${record.filetype})
-      </div>
-    <//>
+    <img key=img${record.id} src=${url} onload=${() => void URL.revokeObjectURL(url)} />
+    <div class=text>
+      ${record.filename} (${record.filetype})
+    </div>
   `;
 };
 
@@ -63,20 +61,14 @@ const NoteCard = record => {
   const { title, text, url } = record;
 
   return html`
-    <${Fragment}>
-      <${Field} class=title value=${title} />
-      <${Field} class=text value=${text} />
-      <${Field} class=text value=${url} />
-    <//>
+    <${Field} class=title value=${title} />
+    <${Field} class=text value=${text} />
+    <${Field} class=text value=${url} />
   `;
 };
 
 const Card = record => {
-  return html`
-    <${Fragment}>
-      <${record.filebuffer ? ImageCard : NoteCard} ...${record} />
-    <//>
-  `;
+  return html`<${record.filebuffer ? ImageCard : NoteCard} ...${record} />`;
 };
 
 const ReminderDate = ({ remindAt, ...props }) => {
@@ -160,7 +152,7 @@ export default ({ events, db, notification }) => {
     });
 
     if (children.length) {
-      render(html`<${Fragment}>${children.reverse()}<//>`, elem);
+      render(html`${children.reverse()}`, elem);
     } else {
       render(html`<div class="preview">
         <p>You have no reminders yet.</p>
