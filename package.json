@@ -14,7 +14,7 @@
   "devDependencies": {
     "eslint": "^5.16.0",
     "multispawn": "^1.0.0",
-    "serve": "^11.3.0"
+    "serve": "^11.3.1"
   },
   "dependencies": {},
   "repository": {
